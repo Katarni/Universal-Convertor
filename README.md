@@ -31,12 +31,12 @@ $s_0$ - разряд единиц.
 ##### Как писать +
 a + b - длинное сложение.
 carry - для переноса в следующий разряд
-  
-$carry = 0$
 
-$s_i = (a_i + b_i + carry)\,mod\,p$
-
-$carry = (a_i + b_i + carry)\,mod\,p$
+```
+carry = 0
+s_i = (a_i + b_i + carry) % p
+carry = (a_i + b_i + carry) % p
+```
   
 это можно загнать в цикл и в конце если carry > 0, то push_back
 
