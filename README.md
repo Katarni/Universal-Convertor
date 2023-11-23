@@ -1,46 +1,44 @@
 # Universal-Convertor
 
-_далее написано тз для данной практической работы_
+_the following is a technical task for practical work_
+  
+Convert nums from one number system to another (from $p$ to $q$)  
+Еhe interface should be **well designed**.
 
-Перевод чисел из одной с. сч. (из и в p-ичную) в другую.
-
-Интерфейс должен быть **грамотно продуман**
-
-### Дополнительно-обязательная часть 
-Класс big integer для хранения чисел.
-Для него перегрузить операторы +, -, \*, /
-### А подлянка то в бэкенде.
-1) размеры чисел не ограничены ($string$ вошел в чат) (длинка)))
-2) надо уметь работать работать с float и с периодической частью
-3) обозначения цифр
+## Дополнительно-обязательная часть 
+Class _big integer_ for numbers.  
+We need overload some operators for this class.
+## The problem is in the backend
+1) there are no limits for a numbers size
+2) we must work with float and periodic fractions
+3) digits
 	+ angel $p, q \leq 36$ 
-	+ devil $p, q - int$ (на самом деле $p, q \leq 255$) числа в квадратных скобках
+	+ devil $p, q - int$ (actually $p, q \leq 255$). When letters run out we will use number in square brackets.
 
 
-### Защита от дурака 
-Защита от символов в окнах p и q. 
-Защита при вводе числа нужна только на коректность цифр в данной системе.
+## Foolprof
+Actually it's not a problem.  
+We protect from letters only p and q.  
+For numbers we will check for the validity of the digets for our number system.  
 
-### Основы длинной арифметики
+## Basics of arbitrary-precision arithmetic
+Every byte is a digit.  
+string or vector of unsigned char.  
+Digits will be stored in order from least to most significant.  
+The fractional part is stored separately, the period and the pre-period too.  
   
-Каждый байт это - цифра 
-string или vector unsigned char
-Целую часть лучше хранить начиная с малых разрядов. 
-$s_0$ - разряд единиц.
-Дробную часть храним отдельно, период и предпериод тоже.
-  
-Для дробей можно использовать fractions
-##### Как писать +
-a + b - длинное сложение.
-carry - для переноса в следующий разряд
+For fraction we can use class _fraction_.  
+#### How to use +
+a + b - long addition.
+carry - to transfer to the next digit.
 
-```
+```cpp
 carry = 0
 s_i = (a_i + b_i + carry) % p
 carry = (a_i + b_i + carry) % p
 ```
   
-это можно загнать в цикл и в конце
+It can be in cycle. After that.
 
 ```cpp
 if (carry > 0) {
@@ -48,13 +46,13 @@ if (carry > 0) {
 }
 ```
 
-##### Алгоритмы умножения
-+ Сверх наивное (сложение)
-+ Наивное - в столбик $O(n^2)$
-+ \* по желанию: Алгоритм Карацубы
+#### Multiplication algorithms
++ Supernative (addition)
++ Native - in a column $O(n^2)$
++ \*optional: Karatsuba algorithm
 
-##### Деление
-Через бинпоиск по ответу 
+#### Division
+Binary search on answer
 
-### Сроки сдачи
-Основная сдача 7 декабря
+## Deadline
+Main deadline on 07.12.23
