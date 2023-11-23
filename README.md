@@ -5,7 +5,7 @@ _the following is a technical task for practical work_
 Convert nums from one number system to another (from $p$ to $q$)  
 Еhe interface should be **well designed**.
 
-## Дополнительно-обязательная часть 
+## Additionally-mandatory part
 Class _big integer_ for numbers.  
 We need overload some operators for this class.
 ## The problem is in the backend
