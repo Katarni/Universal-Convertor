@@ -13,7 +13,10 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(UniversalConvertor main.cpp)
+add_executable(UniversalConvertor main.cpp
+        Convertor.cpp
+        Convertor.h
+        header.h)
 
 target_link_libraries(UniversalConvertor
         Qt::Core
