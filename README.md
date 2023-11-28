@@ -5,7 +5,7 @@ _the following is a technical task for practical work_
 Convert nums from one number system to another (from $p$ to $q$)  
 Еhe interface should be **well designed**.
 
-## Дополнительно-обязательная часть 
+## Additionally-mandatory part
 Class _big integer_ for numbers.  
 We need overload some operators for this class.
 ## The problem is in the backend
@@ -38,7 +38,7 @@ s_i = (a_i + b_i + carry) % p
 carry = (a_i + b_i + carry) % p
 ```
   
-It can be in cycle. After that.
+It can be in cycle. After that:
 
 ```cpp
 if (carry > 0) {
