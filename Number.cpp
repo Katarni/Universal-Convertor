@@ -32,8 +32,22 @@ Number operator+(const Number &num1, const Number &num2) {
   return Number(res, num1.base_);
 }
 
-Number operator*(const Number &num1, const Number &num2) {
-  return Number();
+Number operator*(const Number &a, const Number &b) {
+  int carry = 0;
+  std::vector<unsigned char> c(a.num_.size() + b.num_.size());
+  for (int i = 0; i < a.num_.size(); ++i) {
+    for (int j = 0; j < b.num_.size() || carry; ++j) {
+      int64_t cur = c[i + j] + a.num_[i] * 1ll * (j < b.num_.size() ? b.num_[j] : 0) + carry;
+      c[i+j] = int (cur % a.base_);
+      carry = int (cur / a.base_);
+    }
+  }
+
+  while (c.size() > 1 && c.back() == 0) {
+    c.pop_back();
+  }
+
+  return Number(c, a.base_);
 }
 
 Number Number::operator+=(const Number &other) {
@@ -68,4 +82,8 @@ int Number::toNum(char c) {
   }
 
   return c - 'A' + 10;
+}
+
+std::string Number::toString() {
+  return std::string();
 }

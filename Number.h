@@ -59,6 +59,8 @@ class Number {
   static int toNum(const std::string& str);
   static int toNum(char c);
 
+  std::string toString();
+
  private:
   std::vector<unsigned char> num_;
   int base_;

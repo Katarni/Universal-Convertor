@@ -46,13 +46,14 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
   pre_period.setBase(base);
   period.setBase(base);
 
-  bool bracket = false;
+  bool bracket = false, dot = false;
   std::string let;
   for (char c : num) {
     if (c == '.') {
       std::reverse(str.begin(), str.end());
       integer.setNum(str);
       str.clear();
+      dot = true;
       continue;
     }
 
@@ -89,10 +90,18 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
     }
   }
 
+  if (!str.empty() && !dot) {
+    integer.setNum(str);
+  } else if (!str.empty() && dot) {
+    pre_period.setNum(str);
+  }
+
   if (target == 10) {
     Number converted_integer = convertIntToDecSys(integer);
-    Number converted_pre_period = convertPrePeriodToDecSys(pre_period);
-    Number converted_period = convertPeriodToDecSys(period, int(pre_period.getNum().size()));
+//    Number converted_pre_period = convertPrePeriodToDecSys(pre_period);
+//    Number converted_period = convertPeriodToDecSys(period, int(pre_period.getNum().size()));
+
+    std::cout << converted_integer;
   } else if (base == 10) {
 
   } else {
