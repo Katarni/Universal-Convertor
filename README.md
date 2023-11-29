@@ -1,9 +1,9 @@
 # Universal-Convertor
 
-_the following is a technical task for practical work_
+_the following is a technical task for this practical work_
   
 Convert nums from one number system to another (from $p$ to $q$)  
-Еhe interface should be **well designed**.
+The interface should be **well designed**.
 
 ## Additionally-mandatory part
 Class _big integer_ for numbers.  
@@ -42,7 +42,7 @@ It can be in cycle. After that:
 
 ```cpp
 if (carry > 0) {
-  s.push_back(что-то);
+  s.push_back(smth);
 }
 ```
 
