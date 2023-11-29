@@ -1,4 +1,4 @@
-# Universal-Convertor
+# Universal Convertor
 
 _the following is a technical task for this practical work_
   
