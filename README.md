@@ -42,7 +42,7 @@ It can be in cycle. After that:
 
 ```cpp
 if (carry > 0) {
-  s.push_back(что-то);
+  s.push_back(smth);
 }
 ```
 
