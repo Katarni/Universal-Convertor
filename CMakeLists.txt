@@ -16,7 +16,10 @@ find_package(Qt6 COMPONENTS
 add_executable(UniversalConvertor main.cpp
         Convertor.cpp
         Convertor.h
-        header.h)
+        header.h
+        Number.cpp
+        Number.h
+)
 
 target_link_libraries(UniversalConvertor
         Qt::Core

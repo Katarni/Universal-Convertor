@@ -4,6 +4,7 @@
 
 #pragma ocne
 
+#include <fstream>
 #include <iostream>
 #include <cmath>
 #include <vector>
