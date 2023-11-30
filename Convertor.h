@@ -10,8 +10,7 @@ class Convertor {
  public:
   static std::string convert(const std::string& num, int base, int target);
 
-  static Number convertIntToDecSys(const Number& num);
-  static Number convertPrePeriodToDecSys(const Number& num);
+  static Number convertNumToDecSys(const Number& num);
   static Number convertPeriodToDecSys(const Number& num, int pre_period_size);
 
  private:

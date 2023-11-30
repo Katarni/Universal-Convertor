@@ -41,10 +41,9 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
 
   std::vector<unsigned char> str;
 
-  Number integer, pre_period, period;
+  Number integer, period;
   integer.setBase(base);
-  pre_period.setBase(base);
-  period.setBase(base);
+//  period.setBase(base);
 
   bool bracket = false, dot = false;
   std::string let;
@@ -57,19 +56,18 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
       continue;
     }
 
-    if (c == '(') {
-      std::reverse(str.begin(), str.end());
-      pre_period.setNum(str);
-      str.clear();
-      continue;
-    }
-
-    if (c == ')') {
-      std::reverse(str.begin(), str.end());
-      period.setNum(str);
-      str.clear();
-      continue;
-    }
+//    if (c == '(') {
+//      integer.setFraction(str);
+//      str.clear();
+//      continue;
+//    }
+//
+//    if (c == ')') {
+//      std::reverse(str.begin(), str.end());
+//      period.setNum(str);
+//      str.clear();
+//      continue;
+//    }
 
     if (c == '[') {
       bracket = true;
@@ -93,11 +91,11 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
   if (!str.empty() && !dot) {
     integer.setNum(str);
   } else if (!str.empty() && dot) {
-    pre_period.setNum(str);
+    integer.setFraction(str);
   }
 
   if (target == 10) {
-    Number converted_integer = convertIntToDecSys(integer);
+    Number converted_integer = convertNumToDecSys(integer);
 //    Number converted_pre_period = convertPrePeriodToDecSys(pre_period);
 //    Number converted_period = convertPeriodToDecSys(period, int(pre_period.getNum().size()));
 
@@ -111,24 +109,19 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
   return std::string();
 }
 
-Number Convertor::convertIntToDecSys(const Number &num) {
-  Number converted(std::vector<unsigned char>(0), 10);
-  Number power(1, 10);
+Number Convertor::convertNumToDecSys(const Number &num) {
+  Number converted;
+  Number power("1", 10);
 
   for (unsigned char c : num.getNum()) {
-    converted += power * Number(c, 10);
-    power *= Number(num.getBase(), 10);
+    converted += power * Number(std::to_string(c), 10);
+    power *= Number(std::to_string(num.getBase()), 10);
   }
 
   return converted;
 }
 
-Number Convertor::convertPrePeriodToDecSys(const Number &num) {
-  if (num.getNum().empty()) return Number(std::vector<unsigned char>(0), 10);
-  return Number();
-}
-
 Number Convertor::convertPeriodToDecSys(const Number &num, int pre_period_size) {
-  if (num.getNum().empty()) return Number(std::vector<unsigned char>(0), 10);
+  if (num.getNum().empty()) return Number();
   return Number();
 }
