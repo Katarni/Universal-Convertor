@@ -114,13 +114,49 @@ int Number::toNum(char c) {
     return c - '0';
   }
 
-  return c - 'A' + 10;
+  return c - 'a' + 10;
 }
 
 std::string Number::toString() {
+  std::string str;
+  for (int i = (int)integer_.size() - 1; i >= 0; --i) {
+    if (integer_[i] < 10) {
+      str += char(integer_[i]);
+    } else if (integer_[i] < 36) {
+      str += char(integer_[i] - 10 + 'a');
+    } else {
+      str += "[" + std::to_string(integer_[i]) + "]";
+    }
+  }
+
+  if ((int)fraction_.size() != 0) {
+    str += ".";
+  }
+
+  for (unsigned char c : fraction_) {
+    if (c < 10) {
+      str += char(c);
+    } else if (c < 36) {
+      str += char(c - 10 + 'a');
+    } else {
+      str += "[" + std::to_string(c) + "]";
+    }
+  }
   return std::string();
 }
 
-Number operator/(const Number num1, int divider) {
+Number operator/(Number num1, int divider) {
+  int carry = 0;
 
+  for (int i = (int)num1.integer_.size() - 1; i >= 0; --i) {
+    int64_t cur = num1.integer_[i] + carry * 1ll * num1.base_;
+    num1.integer_[i] = static_cast<unsigned char>(cur / divider);
+    carry = int(cur % divider);
+  }
+
+  while (num1.integer_.size() > 1 && num1.integer_.back() == 0) {
+    num1.integer_.pop_back();
+  }
+
+  return num1;
 }

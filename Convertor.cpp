@@ -99,7 +99,7 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
 //    Number converted_pre_period = convertPrePeriodToDecSys(pre_period);
 //    Number converted_period = convertPeriodToDecSys(period, int(pre_period.getNum().size()));
 
-    std::cout << converted_integer;
+    return converted_integer.toString();
   } else if (base == 10) {
 
   } else {

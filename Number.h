@@ -57,8 +57,8 @@ class Number {
 
 
   friend Number operator+(const Number& num1, const Number& num2);
-  friend Number operator*(const Number num1, const Number num2);
-  friend Number operator/(const Number num1, int divider);
+  friend Number operator*(Number num1, Number num2);
+  friend Number operator/(Number num1, int divider);
 
   Number operator+=(const Number& other);
   Number operator*=(const Number& other);
