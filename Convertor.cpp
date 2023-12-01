@@ -107,7 +107,7 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
     converted_period = convertPeriodToDecSys(period, int(integer.getFraction().size()));
 
   } else if (base == 10) {
-    converted_integer = convertNumFromDecSystem(integer);
+    converted_integer = convertNumFromDecSystem(integer, target);
   } else {
 
   }
@@ -139,6 +139,16 @@ Number Convertor::convertPeriodToDecSys(const Number &num, int pre_period_size) 
   return Number();
 }
 
-Number Convertor::convertNumFromDecSystem(const Number &num) {
-  return Number();
+Number Convertor::convertNumFromDecSystem(const Number &num, int target) {
+  std::string converted_int;
+  Number integer(num.getInteger(), std::vector<unsigned char>(0), 10);
+
+  while (integer != Number("0", 10)) {
+    converted_int += std::to_string(integer % target);
+    integer /= target;
+    integer.setFraction(std::vector<unsigned char>(0));
+  }
+
+  std::reverse(converted_int.begin(), converted_int.end());
+  return Number(converted_int, 10);
 }

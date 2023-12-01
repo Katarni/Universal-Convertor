@@ -224,3 +224,23 @@ int operator%(Number num1, int divider) {
 
   return carry;
 }
+
+bool operator==(const Number &num1, const Number &num2) {
+  if (num1.base_ != num2.base_) return false;
+  if (num1.integer_.size() != num2.integer_.size()) return false;
+  if (num1.fraction_.size() != num2.fraction_.size()) return false;
+
+  for (int i = 0; i < num1.integer_.size(); ++i) {
+    if (num1.integer_[i] != num2.integer_[i]) return false;
+  }
+
+  for (int i = 0; i < num1.fraction_.size(); ++i) {
+    if (num1.fraction_[i] != num2.fraction_[i]) return false;
+  }
+
+  return true;
+}
+
+bool operator!=(const Number &num1, const Number &num2) {
+  return !(num1 == num2);
+}

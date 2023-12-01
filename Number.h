@@ -73,6 +73,9 @@ class Number {
   Number operator*=(const Number& other);
   Number operator/=(int other);
 
+  friend bool operator==(const Number& num1, const Number& num2);
+  friend bool operator!=(const Number& num1, const Number& num2);
+
   std::string toString();
 
   friend std::ostream& operator<<(std::ostream& out, Number num) {

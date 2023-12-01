@@ -16,5 +16,5 @@ class Convertor {
   static Number convertNumToDecSys(const Number& num);
   static Number convertPeriodToDecSys(const Number& num, int pre_period_size);
 
-  static Number convertNumFromDecSystem(const Number& num);
+  static Number convertNumFromDecSystem(const Number& num, int target);
 };
