@@ -8,7 +8,7 @@
 Number operator+(const Number &num1, const Number &num2) {
   int carry = 0;
   std::vector<unsigned char> res_frac(std::max(num1.fraction_.size(), num2.fraction_.size()));
-  for (int i = (int)res_frac.size(); i >= 0; --i) {
+  for (int i = (int)res_frac.size() - 1; i >= 0; --i) {
     if (i >= num1.fraction_.size()) {
       res_frac[i] = ((int)num2.fraction_[i] + carry) % num1.base_;
       carry = ((int)num2.fraction_[i] + carry) / num1.base_;
@@ -57,9 +57,16 @@ Number operator+(const Number &num1, const Number &num2) {
 Number operator*(Number num1, Number num2) {
   int dot = (int)num1.fraction_.size() + (int)num2.fraction_.size();
   int carry = 0;
+
   std::vector<unsigned char> res_int(num1.integer_.size() + num2.integer_.size() + num1.fraction_.size() + num2.fraction_.size());
+
+  std::reverse(num1.fraction_.begin(), num1.fraction_.end());
+  std::reverse(num2.fraction_.begin(), num2.fraction_.end());
   num1.integer_.insert(num1.integer_.begin(), num1.fraction_.begin(), num1.fraction_.end());
   num2.integer_.insert(num2.integer_.begin(), num2.fraction_.begin(), num2.fraction_.end());
+  num2.fraction_.clear();
+  num1.fraction_.clear();
+
   for (int i = 0; i < num1.integer_.size(); ++i) {
     for (int j = 0; j < num2.integer_.size() || carry; ++j) {
       int64_t cur = res_int[i + j] + num1.integer_[i] * 1ll * (j < num2.integer_.size() ? num2.integer_[j] : 0) + carry;
@@ -86,6 +93,10 @@ Number operator*(Number num1, Number num2) {
 
   while ((int)res_frac.size() > 0 && res_frac.back() == 0) {
     res_frac.pop_back();
+  }
+
+  if (res_int.empty()) {
+    res_int.push_back(0);
   }
 
   return Number(res_int, res_frac, num1.base_);
@@ -121,7 +132,7 @@ std::string Number::toString() {
   std::string str;
   for (int i = (int)integer_.size() - 1; i >= 0; --i) {
     if (integer_[i] < 10) {
-      str += char(integer_[i]);
+      str += char(integer_[i] + '0');
     } else if (integer_[i] < 36) {
       str += char(integer_[i] - 10 + 'a');
     } else {
@@ -135,28 +146,69 @@ std::string Number::toString() {
 
   for (unsigned char c : fraction_) {
     if (c < 10) {
-      str += char(c);
+      str += char(c + '0');
     } else if (c < 36) {
       str += char(c - 10 + 'a');
     } else {
       str += "[" + std::to_string(c) + "]";
     }
   }
-  return std::string();
+  return str;
 }
 
-Number operator/(Number num1, int divider) {
+Number operator/(Number num, int divider) {
+  int dot = 0;
+  if (!num.fraction_.empty()) {
+    std::reverse(num.fraction_.begin(), num.fraction_.end());
+    num.integer_.insert(num.integer_.begin(), num.fraction_.begin(), num.fraction_.end());
+    dot += (int)num.fraction_.size();
+    num.fraction_.clear();
+  }
+
+  for (int i = 0; i < 10; ++i) {
+    ++dot;
+    num.integer_.insert(num.integer_.begin(), 0);
+  }
+
   int carry = 0;
 
-  for (int i = (int)num1.integer_.size() - 1; i >= 0; --i) {
-    int64_t cur = num1.integer_[i] + carry * 1ll * num1.base_;
-    num1.integer_[i] = static_cast<unsigned char>(cur / divider);
+  for (int i = (int)num.integer_.size() - 1; i >= 0; --i) {
+    int64_t cur = num.integer_[i] + carry * 1ll * num.base_;
+    num.integer_[i] = static_cast<unsigned char>(cur / divider);
     carry = int(cur % divider);
   }
 
-  while (num1.integer_.size() > 1 && num1.integer_.back() == 0) {
-    num1.integer_.pop_back();
+  while (num.integer_.size() > 1 && num.integer_.back() == 0) {
+    num.integer_.pop_back();
   }
 
-  return num1;
+  while (dot > 0 && (int)num.integer_.size() > 0) {
+    num.fraction_.insert(num.fraction_.begin(), num.integer_.front());
+    num.integer_.erase(num.integer_.begin());
+    --dot;
+  }
+
+  while (dot > 0) {
+    num.fraction_.insert(num.fraction_.begin(), 0);
+    --dot;
+  }
+
+  while (!num.fraction_.empty() && num.fraction_.back() == 0) {
+    num.fraction_.pop_back();
+  }
+
+  if (num.integer_.empty()) {
+    num.integer_.push_back(0);
+  }
+
+  return num;
+}
+
+Number Number::operator/=(int other) {
+  *this = *this / other;
+  return *this;
+}
+
+bool operator<(const Number &num1, const Number &num2) {
+  return false;
 }

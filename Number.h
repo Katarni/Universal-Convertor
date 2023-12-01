@@ -62,6 +62,9 @@ class Number {
 
   Number operator+=(const Number& other);
   Number operator*=(const Number& other);
+  Number operator/=(int other);
+
+  friend bool operator<(const Number& num1, const Number& num2);
 
   friend std::ostream& operator<<(std::ostream& out, const Number& num) {
     for (int i = (int)num.integer_.size() - 1; i >= 0; --i) {
@@ -74,17 +77,17 @@ class Number {
       }
     }
 
-    if (num.fraction_.size() != 0) {
+    if (!num.fraction_.empty()) {
       out << ".";
     }
 
-    for (int i = 0; i < num.fraction_.size(); ++i) {
-      if (num.fraction_[i] < 10) {
-        out << int(num.fraction_[i]);
-      } else if (num.fraction_[i] < 36) {
-        out << char(num.fraction_[i] - 10 + 'A');
+    for (unsigned char c : num.fraction_) {
+      if (c < 10) {
+        out << int(c);
+      } else if (c < 36) {
+        out << char(c - 10 + 'A');
       } else {
-        out << '[' << num.fraction_[i] << ']';
+        out << '[' << c << ']';
       }
     }
 

@@ -88,6 +88,8 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
     }
   }
 
+  std::reverse(str.begin(), str.end());
+
   if (!str.empty() && !dot) {
     integer.setNum(str);
   } else if (!str.empty() && dot) {
@@ -116,6 +118,13 @@ Number Convertor::convertNumToDecSys(const Number &num) {
   for (unsigned char c : num.getNum()) {
     converted += power * Number(std::to_string(c), 10);
     power *= Number(std::to_string(num.getBase()), 10);
+  }
+
+  power = Number("1", 10) / num.getBase();
+
+  for (unsigned char c : num.getFraction()) {
+    converted += power * Number(std::to_string(c), 10);
+    power /= num.getBase();
   }
 
   return converted;
