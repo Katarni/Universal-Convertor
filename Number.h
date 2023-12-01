@@ -31,11 +31,11 @@ class Number {
     base_ = base;
   }
 
-  void setNum(const std::vector<unsigned char>& num) {
-    integer_ = num;
+  void setInteger(const std::vector<unsigned char>& integer) {
+    integer_ = integer;
   }
 
-  std::vector<unsigned char> getNum() const {
+  std::vector<unsigned char> getInteger() const {
     return integer_;
   }
 
@@ -55,41 +55,28 @@ class Number {
     fraction_ = fraction;
   }
 
+  bool isMinus() const {
+    return minus_;
+  }
+
+  void setMinus(bool minus) {
+    minus_ = minus;
+  }
+
 
   friend Number operator+(const Number& num1, const Number& num2);
   friend Number operator*(Number num1, Number num2);
   friend Number operator/(Number num1, int divider);
+  friend int operator%(Number num1, int divider);
 
   Number operator+=(const Number& other);
   Number operator*=(const Number& other);
   Number operator/=(int other);
 
-  friend bool operator<(const Number& num1, const Number& num2);
+  std::string toString();
 
-  friend std::ostream& operator<<(std::ostream& out, const Number& num) {
-    for (int i = (int)num.integer_.size() - 1; i >= 0; --i) {
-      if (num.integer_[i] < 10) {
-        out << int(num.integer_[i]);
-      } else if (num.integer_[i] < 36) {
-        out << char(num.integer_[i] - 10 + 'A');
-      } else {
-        out << '[' << num.integer_[i] << ']';
-      }
-    }
-
-    if (!num.fraction_.empty()) {
-      out << ".";
-    }
-
-    for (unsigned char c : num.fraction_) {
-      if (c < 10) {
-        out << int(c);
-      } else if (c < 36) {
-        out << char(c - 10 + 'A');
-      } else {
-        out << '[' << c << ']';
-      }
-    }
+  friend std::ostream& operator<<(std::ostream& out, Number num) {
+    out << num.toString();
 
     return out;
   }
@@ -97,9 +84,8 @@ class Number {
   static int toNum(const std::string& str);
   static int toNum(char c);
 
-  std::string toString();
-
  private:
   std::vector<unsigned char> integer_, fraction_;
   int base_;
+  bool minus_;
 };

@@ -1,5 +1,5 @@
 #include "Convertor.h"
 
 int main() {
-  std::cout << Convertor::convert("111.111", 2, 10);
+  std::cout << Convertor::convert("-1010.01", 2, 10);
 }

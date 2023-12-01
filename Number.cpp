@@ -130,6 +130,11 @@ int Number::toNum(char c) {
 
 std::string Number::toString() {
   std::string str;
+
+  if (minus_) {
+    str += '-';
+  }
+
   for (int i = (int)integer_.size() - 1; i >= 0; --i) {
     if (integer_[i] < 10) {
       str += char(integer_[i] + '0');
@@ -209,6 +214,13 @@ Number Number::operator/=(int other) {
   return *this;
 }
 
-bool operator<(const Number &num1, const Number &num2) {
-  return false;
+int operator%(Number num1, int divider) {
+  int carry = 0;
+  for (int i=(int)num1.integer_.size()-1; i>=0; --i) {
+    long long cur = num1.integer_[i] + carry * 1ll * num1.base_;
+    num1.integer_[i] = int (cur / divider);
+    carry = int (cur % divider);
+  }
+
+  return carry;
 }

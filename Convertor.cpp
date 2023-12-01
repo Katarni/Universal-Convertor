@@ -48,9 +48,14 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
   bool bracket = false, dot = false;
   std::string let;
   for (char c : num) {
+    if (c == '-') {
+      integer.setMinus(true);
+      continue;
+    }
+
     if (c == '.') {
       std::reverse(str.begin(), str.end());
-      integer.setNum(str);
+      integer.setInteger(str);
       str.clear();
       dot = true;
       continue;
@@ -64,7 +69,7 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
 //
 //    if (c == ')') {
 //      std::reverse(str.begin(), str.end());
-//      period.setNum(str);
+//      period.setInteger(str);
 //      str.clear();
 //      continue;
 //    }
@@ -88,34 +93,33 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
     }
   }
 
-  std::reverse(str.begin(), str.end());
-
   if (!str.empty() && !dot) {
-    integer.setNum(str);
+    std::reverse(str.begin(), str.end());
+    integer.setInteger(str);
   } else if (!str.empty() && dot) {
     integer.setFraction(str);
   }
 
+  Number converted_integer, converted_period;
+
   if (target == 10) {
-    Number converted_integer = convertNumToDecSys(integer);
-//    Number converted_pre_period = convertPrePeriodToDecSys(pre_period);
-//    Number converted_period = convertPeriodToDecSys(period, int(pre_period.getNum().size()));
+    converted_integer = convertNumToDecSys(integer);
+    converted_period = convertPeriodToDecSys(period, int(integer.getFraction().size()));
 
-    return converted_integer.toString();
   } else if (base == 10) {
-
+    converted_integer = convertNumFromDecSystem(integer);
   } else {
 
   }
 
-  return std::string();
+  return converted_integer.toString() + converted_period.toString();
 }
 
 Number Convertor::convertNumToDecSys(const Number &num) {
   Number converted;
   Number power("1", 10);
 
-  for (unsigned char c : num.getNum()) {
+  for (unsigned char c : num.getInteger()) {
     converted += power * Number(std::to_string(c), 10);
     power *= Number(std::to_string(num.getBase()), 10);
   }
@@ -131,6 +135,10 @@ Number Convertor::convertNumToDecSys(const Number &num) {
 }
 
 Number Convertor::convertPeriodToDecSys(const Number &num, int pre_period_size) {
-  if (num.getNum().empty()) return Number();
+  if (num.getInteger().empty()) return Number();
+  return Number();
+}
+
+Number Convertor::convertNumFromDecSystem(const Number &num) {
   return Number();
 }
