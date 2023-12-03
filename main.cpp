@@ -1,5 +1,5 @@
 #include "Convertor.h"
 
 int main() {
-  std::cout << Convertor::convert("7", 10, 3);
+  std::cout << Convertor::convert("0.7", 10, 8);
 }

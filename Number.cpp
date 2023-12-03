@@ -51,7 +51,17 @@ Number operator+(const Number &num1, const Number &num2) {
     res_int.push_back(carry);
   }
 
-  return Number(res_int, res_frac, num1.base_);
+  Number ret(res_int, res_frac, num1.base_);
+
+  if (!num1.period_.empty()){
+    ret.setPeriod(num1.period_);
+  }
+
+  if (!num2.period_.empty()) {
+    ret.setPeriod(num2.period_);
+  }
+
+  return ret;
 }
 
 Number operator*(Number num1, Number num2) {
@@ -136,13 +146,7 @@ std::string Number::toString() {
   }
 
   for (int i = (int)integer_.size() - 1; i >= 0; --i) {
-    if (integer_[i] < 10) {
-      str += char(integer_[i] + '0');
-    } else if (integer_[i] < 36) {
-      str += char(integer_[i] - 10 + 'a');
-    } else {
-      str += "[" + std::to_string(integer_[i]) + "]";
-    }
+    str += toLet(integer_[i]);
   }
 
   if ((int)fraction_.size() != 0) {
@@ -150,14 +154,21 @@ std::string Number::toString() {
   }
 
   for (unsigned char c : fraction_) {
-    if (c < 10) {
-      str += char(c + '0');
-    } else if (c < 36) {
-      str += char(c - 10 + 'a');
-    } else {
-      str += "[" + std::to_string(c) + "]";
-    }
+    str += toLet(c);
   }
+
+  if (period_.empty()) {
+    return str;
+  }
+
+  str += "(";
+
+  for (unsigned char c : period_) {
+    str += toLet(c);
+  }
+
+  str += ")";
+
   return str;
 }
 
@@ -209,11 +220,6 @@ Number operator/(Number num, int divider) {
   return num;
 }
 
-Number Number::operator/=(int other) {
-  *this = *this / other;
-  return *this;
-}
-
 int operator%(Number num1, int divider) {
   int carry = 0;
   for (int i=(int)num1.integer_.size()-1; i>=0; --i) {
@@ -243,4 +249,50 @@ bool operator==(const Number &num1, const Number &num2) {
 
 bool operator!=(const Number &num1, const Number &num2) {
   return !(num1 == num2);
+}
+
+Number Number::binaryPow(const Number &num, int pow) {
+  if (pow == 0) return Number("1", 10);
+  if (pow % 2 == 0) return binaryPow(num * num, pow / 2);
+  return num * binaryPow(num, pow - 1);
+}
+
+const Number operator--(Number num, int x) {
+  for (int i = 0; i < num.integer_.size(); ++i) {
+    if (num.integer_[i] != 0) {
+      num.integer_[i] -= 1;
+      return num;
+    }
+    if (i == num.integer_.size() - 1) {
+      num.minus_ = true;
+      return num;
+    }
+    num.integer_[i] = num.base_ - 1;
+  }
+  return num;
+}
+
+const std::vector<unsigned char> &Number::getPeriod() const {
+  return period_;
+}
+
+void Number::setPeriod(const std::vector<unsigned char> &period) {
+  period_ = period;
+}
+
+Number& Number::operator/=(int divider) {
+  *this = *this / divider;
+  return *this;
+}
+
+std::string Number::toLet(unsigned char c) {
+  std::string str;
+  if (c < 10) {
+    str += char(c + '0');
+  } else if (c < 36) {
+    str += char(c - 10 + 'a');
+  } else {
+    str += "[" + std::to_string(c) + "]";
+  }
+  return str;
 }

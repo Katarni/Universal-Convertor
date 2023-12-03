@@ -41,9 +41,9 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
 
   std::vector<unsigned char> str;
 
-  Number integer, period;
+  Number integer, period, period_den1, period_den2;
   integer.setBase(base);
-//  period.setBase(base);
+  period.setBase(base);
 
   bool bracket = false, dot = false;
   std::string let;
@@ -61,18 +61,20 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
       continue;
     }
 
-//    if (c == '(') {
-//      integer.setFraction(str);
-//      str.clear();
-//      continue;
-//    }
-//
-//    if (c == ')') {
-//      std::reverse(str.begin(), str.end());
-//      period.setInteger(str);
-//      str.clear();
-//      continue;
-//    }
+    if (c == '(') {
+      integer.setFraction(str);
+      str.clear();
+      continue;
+    }
+
+    if (c == ')') {
+      std::reverse(str.begin(), str.end());
+      period.setInteger(str);
+      period_den1 = Number::binaryPow(Number(std::to_string(base), 10), (int)str.size())--;
+      period_den2 = Number::binaryPow(Number(std::to_string(base), 10), (int)integer.getFraction().size());
+      str.clear();
+      continue;
+    }
 
     if (c == '[') {
       bracket = true;
@@ -104,8 +106,6 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
 
   if (target == 10) {
     converted_integer = convertNumToDecSys(integer);
-    converted_period = convertPeriodToDecSys(period, int(integer.getFraction().size()));
-
   } else if (base == 10) {
     converted_integer = convertNumFromDecSystem(integer, target);
   } else {
@@ -134,21 +134,49 @@ Number Convertor::convertNumToDecSys(const Number &num) {
   return converted;
 }
 
-Number Convertor::convertPeriodToDecSys(const Number &num, int pre_period_size) {
-  if (num.getInteger().empty()) return Number();
-  return Number();
-}
-
 Number Convertor::convertNumFromDecSystem(const Number &num, int target) {
-  std::string converted_int;
+  std::vector<unsigned char> converted_int;
   Number integer(num.getInteger(), std::vector<unsigned char>(0), 10);
 
   while (integer != Number("0", 10)) {
-    converted_int += std::to_string(integer % target);
+    converted_int.push_back(integer % target);
     integer /= target;
     integer.setFraction(std::vector<unsigned char>(0));
   }
 
-  std::reverse(converted_int.begin(), converted_int.end());
-  return Number(converted_int, 10);
+  if (converted_int.empty()) {
+    converted_int.push_back(0);
+  }
+
+  Number converted(converted_int, std::vector<unsigned char>(0), 10);
+
+  std::vector<unsigned char> converted_fract;
+  Number fract(std::vector<unsigned char>(0), num.getFraction(), 10);
+  std::set<std::pair<std::string, int>> fract_find_period;
+
+  int i = 0, period_start = -1;
+  while (fract != Number(std::vector<unsigned char>(0), std::vector<unsigned char>(0), 10)) {
+    fract *= Number(std::to_string(target), 10);
+    converted_fract.push_back(fract.getInteger()[0]);
+    fract.setInteger(std::vector<unsigned char>(0));
+    std::string str;
+    for (unsigned char c : fract.getFraction()) {
+      str += Number::toLet(c);
+    }
+    auto it = fract_find_period.lower_bound({str, 0});
+    if (it != fract_find_period.end() && it->first == str) {
+      period_start = it->second + 1;
+      break;
+    }
+    fract_find_period.insert({str, i});
+  }
+
+  if (period_start != -1) {
+    converted.setFraction(std::vector<unsigned char>(converted_fract.begin(), converted_fract.begin() + period_start));
+    converted.setPeriod(std::vector<unsigned char>(converted_fract.begin() + period_start, converted_fract.end()));
+  } else {
+    converted.setFraction(converted_fract);
+  }
+
+  return converted;
 }
