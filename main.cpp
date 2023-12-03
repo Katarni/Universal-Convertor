@@ -1,5 +1,10 @@
-#include "Convertor.h"
+#include "App.h"
 
-int main() {
-  std::cout << Convertor::convert("0.7", 10, 8);
+int main(int argc, char *argv[]) {
+  QApplication a(argc, argv);
+
+  App convertor(600, 500);
+  convertor.render();
+
+  return QApplication::exec();
 }

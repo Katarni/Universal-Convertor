@@ -19,6 +19,8 @@ add_executable(UniversalConvertor main.cpp
         header.h
         Number.cpp
         Number.h
+        App.cpp
+        App.h
 )
 
 target_link_libraries(UniversalConvertor

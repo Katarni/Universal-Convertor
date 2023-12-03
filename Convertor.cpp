@@ -172,8 +172,10 @@ Number Convertor::convertNumFromDecSystem(const Number &num, int target) {
   }
 
   if (period_start != -1) {
-    converted.setFraction(std::vector<unsigned char>(converted_fract.begin(), converted_fract.begin() + period_start));
-    converted.setPeriod(std::vector<unsigned char>(converted_fract.begin() + period_start, converted_fract.end()));
+    converted.setFraction(std::vector<unsigned char>(converted_fract.begin(),
+                                                     converted_fract.begin() + period_start));
+    converted.setPeriod(std::vector<unsigned char>(converted_fract.begin() + period_start,
+                                                   converted_fract.end()));
   } else {
     converted.setFraction(converted_fract);
   }
