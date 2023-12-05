@@ -158,7 +158,7 @@ std::string Number::toString() {
     str += toLet(integer_[i]);
   }
 
-  if ((int)fraction_.size() != 0) {
+  if (!fraction_.empty() || !period_.empty()) {
     str += ".";
   }
 
@@ -370,15 +370,18 @@ int64_t Number::toInt64() {
 
 int64_t Number::toInt64() const {
   int64_t sum = 0;
-  for (unsigned char c : integer_) {
-    sum = sum * 10 + c;
+  for (int i = (int)integer_.size(); i >= 0; --i) {
+    sum = sum * 10 + integer_[i];
   }
   return sum;
 }
 
 void Number::normalizePeriods(Number &num1, Number &num2) {
   if (num1.fraction_.size() > num2.fraction_.size()) {
-    if (num2.period_.empty()) return;
+    if (num2.period_.empty()) {
+      num2.period_.resize(num1.period_.size());
+      return;
+    }
 
     while (num1.fraction_.size() != num2.fraction_.size()) {
       num2.fraction_.push_back(num2.period_.front());
@@ -386,7 +389,10 @@ void Number::normalizePeriods(Number &num1, Number &num2) {
       num2.period_.erase(num2.period_.begin());
     }
   } else if (num2.fraction_.size() > num1.fraction_.size()) {
-    if (num1.period_.empty()) return;
+    if (num1.period_.empty()) {
+      num1.period_.resize(num2.period_.size());
+      return;
+    }
 
     while (num1.fraction_.size() != num2.fraction_.size()) {
       num1.fraction_.push_back(num1.period_.front());
@@ -395,7 +401,14 @@ void Number::normalizePeriods(Number &num1, Number &num2) {
     }
   }
 
-  if (num1.period_.empty() || num2.period_.empty()) return;
+  if (num1.period_.empty()) {
+    num1.period_.resize(num2.period_.size());
+    return;
+  }
+  if (num2.period_.empty()) {
+    num2.period_.resize(num1.period_.size());
+    return;
+  }
   if (num1.period_.size() == num2.period_.size()) return;
 
   int size_lcm = lcm((int)num1.period_.size(), (int)num2.period_.size());

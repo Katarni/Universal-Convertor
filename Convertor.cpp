@@ -160,21 +160,27 @@ Number Convertor::convertNumFromDecSystem(const Number &num, int target) {
   Number fract(std::vector<unsigned char>(0), num.getFraction(), 10);
   std::set<std::pair<std::string, int>> fract_find_period;
 
-  int i = 0, period_start = -1;
+  std::string str;
+  for (unsigned char c : fract.getFraction()) {
+    str += Number::toLet(c);
+  }
+  fract_find_period.insert({str, 0});
+
+  int i = 1, period_start = -1;
   while (fract != Number(std::vector<unsigned char>(0), std::vector<unsigned char>(0), 10)) {
     fract *= Number(std::to_string(target), 10);
     converted_fract.push_back(fract.getInteger()[0]);
     fract.setInteger(std::vector<unsigned char>(0));
-    std::string str;
     for (unsigned char c : fract.getFraction()) {
       str += Number::toLet(c);
     }
     auto it = fract_find_period.lower_bound({str, 0});
     if (it != fract_find_period.end() && it->first == str) {
-      period_start = it->second + 1;
+      period_start = it->second;
       break;
     }
     fract_find_period.insert({str, i});
+    str.clear();
   }
 
   if (period_start != -1) {
