@@ -4,6 +4,7 @@
 
 #include "Convertor.h"
 
+
 bool Convertor::isGood(const std::string& number, int base) {
   std::string let;
   bool bracket = false;
