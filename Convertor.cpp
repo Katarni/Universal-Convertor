@@ -39,14 +39,13 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
     return "число не корректно";
   }
 
-  std::vector<unsigned char> str;
-
   Number integer, period, period_den1, period_den2;
   integer.setBase(base);
   period.setBase(base);
 
   bool bracket = false, dot = false;
   std::string let;
+  std::vector<unsigned char> str;
   for (char c : num) {
     if (c == '-') {
       integer.setMinus(true);
@@ -106,13 +105,20 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
 
   if (target == 10) {
     converted_integer = convertNumToDecSys(integer);
+    if (!period.getInteger().empty()) {
+      converted_period = convertPeriodToDecSys(period, period_den1, period_den2);
+    }
   } else if (base == 10) {
     converted_integer = convertNumFromDecSystem(integer, target);
+    if (!period.getInteger().empty()) {
+      converted_period = convertPeriodFromDecSys(period, period_den1, period_den2);
+    }
   } else {
-
+    Number dec_sys_integer = convertNumToDecSys(integer);
+    converted_integer = convertNumFromDecSystem(dec_sys_integer, target);
   }
 
-  return converted_integer.toString() + converted_period.toString();
+  return (converted_integer + converted_period).toString();
 }
 
 Number Convertor::convertNumToDecSys(const Number &num) {
@@ -181,4 +187,15 @@ Number Convertor::convertNumFromDecSystem(const Number &num, int target) {
   }
 
   return converted;
+}
+
+Number Convertor::convertPeriodToDecSys(const Number& period_num, const Number& period_den1, const Number& period_den2) {
+  Number converted_period = convertNumToDecSys(period_num);
+  converted_period /= period_den1.toInt64();
+  converted_period /= period_den2.toInt64();
+  return converted_period;
+}
+
+Number Convertor::convertPeriodFromDecSys(const Number& period_num, const Number& period_den1, const Number& period_den2) {
+  return Number();
 }

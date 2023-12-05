@@ -24,28 +24,73 @@ class Number {
                               fraction_(other.fraction_),
                               period_(other.period_),
                               minus_(other.minus_){}
-  Number(std::string num, int base) {
-    std::vector<unsigned char> let;
-    for (int i = (int)num.size() - 1; i >= 0; --i) {
-      if (num[i] == '-') {
+  Number(const std::string& num, int base) {
+    bool bracket = false, dot = false;
+    minus_ = false;
+    std::string let;
+    std::vector<unsigned char> str;
+    for (char c : num) {
+      if (c == '-') {
         minus_ = true;
         continue;
       }
 
-      if (num[i] == '.') {
-        std::reverse(let.begin(), let.end());
-        fraction_ = let;
+      if (c == '.') {
+        std::reverse(str.begin(), str.end());
+        integer_ = str;
+        str.clear();
+        dot = true;
+        continue;
+      }
+
+      if (c == '(') {
+        fraction_ = str;
+        str.clear();
+        continue;
+      }
+
+      if (c == ')') {
+        period_ = str;
+        str.clear();
+        continue;
+      }
+
+      if (c == '[') {
+        bracket = true;
+        continue;
+      }
+
+      if (c == ']') {
+        bracket = false;
+        str.push_back(Number::toNum(let));
         let.clear();
         continue;
       }
 
-      let.push_back(toNum(num[i]));
+      if (bracket) {
+        let.push_back(c);
+      } else {
+        str.push_back(Number::toNum(c));
+      }
     }
 
-    integer_ = let;
+    if (!str.empty() && !dot) {
+      std::reverse(str.begin(), str.end());
+      integer_ = str;
+    } else if (!str.empty() && dot) {
+      fraction_ = str;
+    }
+
     base_ = base;
-    period_ = std::vector<unsigned char>(0);
   }
+
+  Number (const std::vector<unsigned char>& num,
+          const std::vector<unsigned char>& fraction,
+          const std::vector<unsigned char>& period,
+          int base): integer_(num),
+                    base_(base), fraction_(fraction),
+                    period_(period),
+                    minus_(false) {}
 
   Number& operator=(const Number& other) {
     integer_ = other.integer_;
@@ -88,25 +133,26 @@ class Number {
 
   void setPeriod(const std::vector<unsigned char> &period);
 
-  friend Number operator+(const Number& num1, const Number& num2);
+  friend Number operator+(Number num1, Number num2);
   friend Number operator*(Number num1, Number num2);
   friend Number operator/(Number num1, int divider);
+  friend Number operator/(Number num1, int64_t divider);
   friend int operator%(Number num1, int divider);
 
   Number operator+=(const Number& other);
   Number operator*=(const Number& other);
   Number& operator/=(int divider);
+  Number& operator/=(int64_t divider);
 
   friend bool operator==(const Number& num1, const Number& num2);
   friend bool operator!=(const Number& num1, const Number& num2);
 
-  friend const Number operator--(Number num, int x);
+  friend Number operator--(Number num, int x);
 
   std::string toString();
 
   friend std::ostream& operator<<(std::ostream& out, Number num) {
     out << num.toString();
-
     return out;
   }
 
@@ -117,8 +163,21 @@ class Number {
 
   static Number binaryPow(const Number& num, int pow);
 
+  int64_t toInt64();
+  int64_t toInt64() const;
+
  private:
   std::vector<unsigned char> integer_, fraction_, period_;
   int base_;
   bool minus_;
+
+  static void normalizePeriods(Number& num1, Number& num2);
+
+  static int gcd(int a, int b) {
+    return !b ? a : gcd(b, a % b);
+  }
+
+  static int lcm(int a, int b) {
+    return a * b / gcd(a, b);
+  }
 };

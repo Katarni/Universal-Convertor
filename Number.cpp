@@ -5,8 +5,27 @@
 #include "Number.h"
 
 
-Number operator+(const Number &num1, const Number &num2) {
+Number operator+(Number num1, Number num2) {
   int carry = 0;
+
+  if (!num1.period_.empty() || !num2.period_.empty()) {
+    Number::normalizePeriods(num1, num2);
+  }
+  std::vector<unsigned char> res_period(num1.period_.size());
+  for (int i = (int)res_period.size() - 1; i >= 0; --i) {
+    res_period[i] = ((int)num1.period_[i] + (int)num2.period_[i] + carry) % num1.base_;
+    carry = ((int)num1.period_[i] + (int)num2.period_[i] + carry) / num1.base_;
+  }
+
+  int p_carry = carry;
+  for (int i = (int)res_period.size() - 1; i >= 0 && p_carry > 0; --i) {
+    res_period[i] = ((int)res_period[i] + p_carry) % num1.base_;
+    p_carry = ((int)res_period[i] + p_carry) / num1.base_;
+    if (!i && p_carry) {
+      i = (int)res_period.size();
+    }
+  }
+
   std::vector<unsigned char> res_frac(std::max(num1.fraction_.size(), num2.fraction_.size()));
   for (int i = (int)res_frac.size() - 1; i >= 0; --i) {
     if (i >= num1.fraction_.size()) {
@@ -51,17 +70,7 @@ Number operator+(const Number &num1, const Number &num2) {
     res_int.push_back(carry);
   }
 
-  Number ret(res_int, res_frac, num1.base_);
-
-  if (!num1.period_.empty()){
-    ret.setPeriod(num1.period_);
-  }
-
-  if (!num2.period_.empty()) {
-    ret.setPeriod(num2.period_);
-  }
-
-  return ret;
+  return Number(res_int, res_frac, res_period, num1.base_);
 }
 
 Number operator*(Number num1, Number num2) {
@@ -220,6 +229,54 @@ Number operator/(Number num, int divider) {
   return num;
 }
 
+Number operator/(Number num, int64_t divider) {
+  int dot = 0;
+  if (!num.fraction_.empty()) {
+    std::reverse(num.fraction_.begin(), num.fraction_.end());
+    num.integer_.insert(num.integer_.begin(), num.fraction_.begin(), num.fraction_.end());
+    dot += (int)num.fraction_.size();
+    num.fraction_.clear();
+  }
+
+  for (int i = 0; i < 10; ++i) {
+    ++dot;
+    num.integer_.insert(num.integer_.begin(), 0);
+  }
+
+  int carry = 0;
+
+  for (int i = (int)num.integer_.size() - 1; i >= 0; --i) {
+    int64_t cur = num.integer_[i] + carry * 1ll * num.base_;
+    num.integer_[i] = static_cast<unsigned char>(cur / divider);
+    carry = int(cur % divider);
+  }
+
+  while (num.integer_.size() > 1 && num.integer_.back() == 0) {
+    num.integer_.pop_back();
+  }
+
+  while (dot > 0 && (int)num.integer_.size() > 0) {
+    num.fraction_.insert(num.fraction_.begin(), num.integer_.front());
+    num.integer_.erase(num.integer_.begin());
+    --dot;
+  }
+
+  while (dot > 0) {
+    num.fraction_.insert(num.fraction_.begin(), 0);
+    --dot;
+  }
+
+  while (!num.fraction_.empty() && num.fraction_.back() == 0) {
+    num.fraction_.pop_back();
+  }
+
+  if (num.integer_.empty()) {
+    num.integer_.push_back(0);
+  }
+
+  return num;
+}
+
 int operator%(Number num1, int divider) {
   int carry = 0;
   for (int i=(int)num1.integer_.size()-1; i>=0; --i) {
@@ -257,7 +314,7 @@ Number Number::binaryPow(const Number &num, int pow) {
   return num * binaryPow(num, pow - 1);
 }
 
-const Number operator--(Number num, int x) {
+Number operator--(Number num, int x) {
   for (int i = 0; i < num.integer_.size(); ++i) {
     if (num.integer_[i] != 0) {
       num.integer_[i] -= 1;
@@ -285,6 +342,12 @@ Number& Number::operator/=(int divider) {
   return *this;
 }
 
+Number& Number::operator/=(int64_t divider) {
+  *this = *this / divider;
+  return *this;
+}
+
+
 std::string Number::toLet(unsigned char c) {
   std::string str;
   if (c < 10) {
@@ -295,4 +358,56 @@ std::string Number::toLet(unsigned char c) {
     str += "[" + std::to_string(c) + "]";
   }
   return str;
+}
+
+int64_t Number::toInt64() {
+  int64_t sum = 0;
+  for (unsigned char c : integer_) {
+    sum = sum * 10 + c;
+  }
+  return sum;
+}
+
+int64_t Number::toInt64() const {
+  int64_t sum = 0;
+  for (unsigned char c : integer_) {
+    sum = sum * 10 + c;
+  }
+  return sum;
+}
+
+void Number::normalizePeriods(Number &num1, Number &num2) {
+  if (num1.fraction_.size() > num2.fraction_.size()) {
+    if (num2.period_.empty()) return;
+
+    while (num1.fraction_.size() != num2.fraction_.size()) {
+      num2.fraction_.push_back(num2.period_.front());
+      num2.period_.push_back(num2.period_.front());
+      num2.period_.erase(num2.period_.begin());
+    }
+  } else if (num2.fraction_.size() > num1.fraction_.size()) {
+    if (num1.period_.empty()) return;
+
+    while (num1.fraction_.size() != num2.fraction_.size()) {
+      num1.fraction_.push_back(num1.period_.front());
+      num1.period_.push_back(num1.period_.front());
+      num1.period_.erase(num1.period_.begin());
+    }
+  }
+
+  if (num1.period_.empty() || num2.period_.empty()) return;
+  if (num1.period_.size() == num2.period_.size()) return;
+
+  int size_lcm = lcm((int)num1.period_.size(), (int)num2.period_.size());
+  int multiple_num1 = (size_lcm / (int)num1.period_.size()) - 1;
+  std::vector<unsigned char> template_num1 = num1.period_;
+  for (int i = 0; i < multiple_num1; ++i) {
+    num1.period_.insert(num1.period_.end(), template_num1.begin(), template_num1.end());
+  }
+
+  int multiple_num2 = (size_lcm / (int)num2.period_.size()) - 1;
+  std::vector<unsigned char> template_num2 = num2.period_;
+  for (int i = 0; i < multiple_num2; ++i) {
+    num2.period_.insert(num2.period_.end(), num2.period_.begin(), num2.period_.end());
+  }
 }
