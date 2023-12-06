@@ -136,13 +136,13 @@ class Number {
   friend Number operator+(Number num1, Number num2);
   friend Number operator*(Number num1, Number num2);
   friend Number operator/(Number num1, int divider);
-  friend Number operator/(Number num1, int64_t divider);
+  friend Number operator/(Number num1, uint64_t divider);
   friend int operator%(Number num1, int divider);
 
   Number operator+=(const Number& other);
   Number operator*=(const Number& other);
   Number& operator/=(int divider);
-  Number& operator/=(int64_t divider);
+  Number& operator/=(uint64_t divider);
 
   friend bool operator==(const Number& num1, const Number& num2);
   friend bool operator!=(const Number& num1, const Number& num2);
@@ -163,8 +163,8 @@ class Number {
 
   static Number binaryPow(const Number& num, int pow);
 
-  int64_t toInt64();
-  int64_t toInt64() const;
+  uint64_t toInt64();
+  uint64_t toInt64() const;
 
  private:
   std::vector<unsigned char> integer_, fraction_, period_;

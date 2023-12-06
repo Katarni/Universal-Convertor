@@ -229,7 +229,7 @@ Number operator/(Number num, int divider) {
   return num;
 }
 
-Number operator/(Number num, int64_t divider) {
+Number operator/(Number num, uint64_t divider) {
   int dot = 0;
   if (!num.fraction_.empty()) {
     std::reverse(num.fraction_.begin(), num.fraction_.end());
@@ -342,7 +342,7 @@ Number& Number::operator/=(int divider) {
   return *this;
 }
 
-Number& Number::operator/=(int64_t divider) {
+Number& Number::operator/=(uint64_t divider) {
   *this = *this / divider;
   return *this;
 }
@@ -360,16 +360,16 @@ std::string Number::toLet(unsigned char c) {
   return str;
 }
 
-int64_t Number::toInt64() {
-  int64_t sum = 0;
+uint64_t Number::toInt64() {
+  uint64_t sum = 0;
   for (unsigned char c : integer_) {
     sum = sum * 10 + c;
   }
   return sum;
 }
 
-int64_t Number::toInt64() const {
-  int64_t sum = 0;
+uint64_t Number::toInt64() const {
+  uint64_t sum = 0;
   for (int i = (int)integer_.size(); i >= 0; --i) {
     sum = sum * 10 + integer_[i];
   }
