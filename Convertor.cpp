@@ -9,7 +9,7 @@ bool Convertor::isGood(const std::string& number, int base) {
   std::string let;
   bool bracket = false;
   for (char c : number) {
-    if (c == '.' || c == '(' || c == ')') continue;
+    if (c == '.' || c == '(' || c == ')' || c == ',') continue;
 
     if (c == '[') {
       bracket = true;
@@ -53,7 +53,7 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
       continue;
     }
 
-    if (c == '.') {
+    if (c == '.' || c == ',') {
       std::reverse(str.begin(), str.end());
       integer.setInteger(str);
       str.clear();
@@ -102,7 +102,7 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
     integer.setFraction(str);
   }
 
-  Number converted_integer, converted_period;
+  Number converted_integer("", target), converted_period("", target);
 
   if (target == 10) {
     converted_integer = convertNumToDecSys(integer);
@@ -155,7 +155,7 @@ Number Convertor::convertNumFromDecSystem(const Number &num, int target) {
     converted_int.push_back(0);
   }
 
-  Number converted(converted_int, std::vector<unsigned char>(0), 10);
+  Number converted(converted_int, std::vector<unsigned char>(0), target);
 
   std::vector<unsigned char> converted_fract;
   Number fract(std::vector<unsigned char>(0), num.getFraction(), 10);
@@ -170,7 +170,9 @@ Number Convertor::convertNumFromDecSystem(const Number &num, int target) {
   int i = 1, period_start = -1;
   while (fract != Number(std::vector<unsigned char>(0), std::vector<unsigned char>(0), 10)) {
     fract *= Number(std::to_string(target), 10);
-    converted_fract.push_back(fract.getInteger()[0]);
+    converted_fract.push_back(convertNumFromDecSystem(Number(fract.getInteger(),
+                                                             std::vector<unsigned char>(0), 10),
+                                                      target).getInteger()[0]);
     fract.setInteger(std::vector<unsigned char>(0));
     for (unsigned char c : fract.getFraction()) {
       str += Number::toLet(c);

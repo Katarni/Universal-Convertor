@@ -35,7 +35,7 @@ class Number {
         continue;
       }
 
-      if (c == '.') {
+      if (c == '.' || c == ',') {
         std::reverse(str.begin(), str.end());
         integer_ = str;
         str.clear();

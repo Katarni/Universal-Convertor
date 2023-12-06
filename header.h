@@ -10,6 +10,7 @@
 #include <cmath>
 #include <vector>
 #include <string>
+#include <algorithm>
 #include <set>
 
 // QT
