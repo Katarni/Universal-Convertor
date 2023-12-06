@@ -4,7 +4,6 @@
 
 #include "Convertor.h"
 
-
 bool Convertor::isGood(const std::string& number, int base) {
   std::string let;
   bool bracket = false;
@@ -112,7 +111,7 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
   } else if (base == 10) {
     converted_integer = convertNumFromDecSystem(integer, target);
     if (!period.getInteger().empty()) {
-      converted_period = convertPeriodFromDecSys(period, period_den1, period_den2);
+      converted_period = convertPeriodFromDecSys(period, period_den1, period_den2, target);
     }
   } else {
     Number dec_sys_integer = convertNumToDecSys(integer);
@@ -198,13 +197,21 @@ Number Convertor::convertNumFromDecSystem(const Number &num, int target) {
   return converted;
 }
 
-Number Convertor::convertPeriodToDecSys(const Number& period_num, const Number& period_den1, const Number& period_den2) {
+Number Convertor::convertPeriodToDecSys(const Number& period_num,
+                                        const Number& period_den1,
+                                        const Number& period_den2) {
   Number converted_period = convertNumToDecSys(period_num);
   converted_period /= period_den1.toInt64();
   converted_period /= period_den2.toInt64();
   return converted_period;
 }
 
-Number Convertor::convertPeriodFromDecSys(const Number& period_num, const Number& period_den1, const Number& period_den2) {
-  return Number();
+Number Convertor::convertPeriodFromDecSys(const Number& period_num,
+                                          const Number& period_den1,
+                                          const Number& period_den2,
+                                          int target) {
+  Number converted_period = convertNumFromDecSystem(period_num, target);
+  Number converted_den1 = convertNumFromDecSystem(period_den1, target);
+  Number converted_den2 = convertNumFromDecSystem(period_den2, target);
+  return converted_period;
 }

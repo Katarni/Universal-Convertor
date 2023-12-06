@@ -14,8 +14,13 @@ class Convertor {
   static bool isGood(const std::string& number, int base);
 
   static Number convertNumToDecSys(const Number& num);
-  static Number convertPeriodToDecSys(const Number& period_num, const Number& period_den1, const Number& period_den2);
+  static Number convertPeriodToDecSys(const Number& period_num,
+                                      const Number& period_den1,
+                                      const Number& period_den2);
 
   static Number convertNumFromDecSystem(const Number& num, int target);
-  static Number convertPeriodFromDecSys(const Number& period_num, const Number& period_den1, const Number& period_den2);
+  static Number convertPeriodFromDecSys(const Number& period_num,
+                                        const Number& period_den1,
+                                        const Number& period_den2,
+                                        int target);
 };

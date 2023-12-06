@@ -4,7 +4,6 @@
 
 #include "Number.h"
 
-
 Number operator+(Number num1, Number num2) {
   int carry = 0;
 
@@ -77,7 +76,10 @@ Number operator*(Number num1, Number num2) {
   int dot = (int)num1.fraction_.size() + (int)num2.fraction_.size();
   int carry = 0;
 
-  std::vector<unsigned char> res_int(num1.integer_.size() + num2.integer_.size() + num1.fraction_.size() + num2.fraction_.size());
+  std::vector<unsigned char> res_int(num1.integer_.size() +
+                                      num2.integer_.size() +
+                                      num1.fraction_.size() +
+                                      num2.fraction_.size());
 
   std::reverse(num1.fraction_.begin(), num1.fraction_.end());
   std::reverse(num2.fraction_.begin(), num2.fraction_.end());
@@ -88,7 +90,7 @@ Number operator*(Number num1, Number num2) {
 
   for (int i = 0; i < num1.integer_.size(); ++i) {
     for (int j = 0; j < num2.integer_.size() || carry; ++j) {
-      int64_t cur = res_int[i + j] + num1.integer_[i] * 1ll * (j < num2.integer_.size() ? num2.integer_[j] : 0) + carry;
+      int64_t cur = res_int[i + j] + (int64_t)num1.integer_[i] * (j < num2.integer_.size() ? num2.integer_[j] : 0) + carry;
       res_int[i + j] = int (cur % num1.base_);
       carry = int (cur / num1.base_);
     }
@@ -198,7 +200,7 @@ Number operator/(Number num, int divider) {
   int carry = 0;
 
   for (int i = (int)num.integer_.size() - 1; i >= 0; --i) {
-    int64_t cur = num.integer_[i] + carry * 1ll * num.base_;
+    int64_t cur = num.integer_[i] + (int64_t)carry * num.base_;
     num.integer_[i] = static_cast<unsigned char>(cur / divider);
     carry = int(cur % divider);
   }
@@ -246,7 +248,7 @@ Number operator/(Number num, uint64_t divider) {
   int carry = 0;
 
   for (int i = (int)num.integer_.size() - 1; i >= 0; --i) {
-    int64_t cur = num.integer_[i] + carry * 1ll * num.base_;
+    int64_t cur = num.integer_[i] + (int64_t)carry * num.base_;
     num.integer_[i] = static_cast<unsigned char>(cur / divider);
     carry = int(cur % divider);
   }
@@ -280,7 +282,7 @@ Number operator/(Number num, uint64_t divider) {
 int operator%(Number num1, int divider) {
   int carry = 0;
   for (int i=(int)num1.integer_.size()-1; i>=0; --i) {
-    long long cur = num1.integer_[i] + carry * 1ll * num1.base_;
+    long long cur = num1.integer_[i] + (int64_t)carry * num1.base_;
     num1.integer_[i] = int (cur / divider);
     carry = int (cur % divider);
   }
