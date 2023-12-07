@@ -29,6 +29,8 @@ class Fraction {
 
   friend Fraction operator*(Fraction fract, const Number& num);
 
+  static Number normalizeFract(Fraction& fract);
+
  private:
   Number num_, den_;
 };

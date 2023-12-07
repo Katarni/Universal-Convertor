@@ -209,6 +209,11 @@ Number Convertor::convertPeriodToDecSys(const Number& period_num,
   return converted_period;
 }
 
-Number Convertor::convertPeriodFromDecSys(const Number &period_num, int pre_period_size, int target) {
+Number Convertor::convertPeriodFromDecSys(Number period_num, int pre_period_size, int target) {
+  Number den_period_fract = Number::binaryPow(Number("10", 10), (int)period_num.getInteger().size() + pre_period_size)--;
+  den_period_fract *= Number::binaryPow(Number("10", 10), pre_period_size);
+
+  Number::normalizePeriods(period_num, pre_period_size);
+
   return Number();
 }

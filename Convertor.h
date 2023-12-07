@@ -19,7 +19,7 @@ class Convertor {
                                       const Number& period_den2);
 
   static Number convertNumFromDecSystem(const Number& num, int target);
-  static Number convertPeriodFromDecSys(const Number& period_num,
+  static Number convertPeriodFromDecSys(Number period_num,
                                         int pre_period_size,
                                         int target);
 };

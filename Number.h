@@ -134,6 +134,8 @@ class Number {
   friend Number operator/(Number num1, uint64_t divider);
   friend int operator%(Number num1, int divider);
 
+  friend Number operator+(const Number& num1, int num2);
+
   Number operator+=(const Number& other);
   Number operator*=(const Number& other);
   Number& operator/=(int divider);
@@ -143,6 +145,11 @@ class Number {
   friend bool operator!=(const Number& num1, const Number& num2);
 
   friend Number operator--(Number num, int x);
+  friend Number operator++(Number& num);
+  friend Number operator--(Number& num);
+
+  friend bool operator<(const Number& num1, const Number& num2);
+  friend bool operator>(const Number& num1, const Number& num2);
 
   std::string toString();
 
@@ -159,6 +166,14 @@ class Number {
   static Number binaryPow(const Number& num, int pow);
 
   uint64_t toInt64() const;
+
+  static void normalizePeriods(Number& num, int pre_period_size);
+
+  static Number ceil(const Number& num) {
+    if (num.fraction_.empty()) return num;
+    if (num.fraction_[0] >= num.base_ / 2) return num + 1;
+    return num;
+  }
 
  private:
   std::vector<unsigned char> integer_, fraction_, period_;

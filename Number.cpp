@@ -320,14 +320,19 @@ Number operator--(Number num, int x) {
   for (int i = 0; i < num.integer_.size(); ++i) {
     if (num.integer_[i] != 0) {
       num.integer_[i] -= 1;
-      return num;
+      break;
     }
     if (i == num.integer_.size() - 1) {
       num.minus_ = true;
-      return num;
+      break;
     }
     num.integer_[i] = num.base_ - 1;
   }
+
+  while (num.integer_.back() == 0) {
+    num.integer_.pop_back();
+  }
+
   return num;
 }
 
@@ -412,4 +417,66 @@ void Number::normalizePeriods(Number &num1, Number &num2) {
   for (int i = 0; i < multiple_num2; ++i) {
     num2.period_.insert(num2.period_.end(), num2.period_.begin(), num2.period_.end());
   }
+}
+
+void Number::normalizePeriods(Number &num, int pre_period_size) {
+  int period_size = num.integer_.size();
+
+  for (int i = 0, j = 0; i < pre_period_size; ++i, j = j != period_size - 1 ? j + 1 : 0) {
+    num.integer_.push_back(num.integer_[j]);
+  }
+}
+
+Number operator++(Number &num) {
+  num += Number("1", 10);
+  return num;
+}
+
+bool operator<(const Number &num1, const Number &num2) {
+  if (num1.integer_.size() < num2.integer_.size()) return true;
+  if (num1.integer_.size() > num2.integer_.size()) return false;
+
+  for (int i = (int)num1.integer_.size() - 1; i >= 0; --i) {
+    if (num1.integer_[i] < num2.integer_[i]) return true;
+    if (num1.integer_[i] > num2.integer_[i]) return false;
+  }
+
+  for (int i = 0; i < std::min(num1.fraction_.size(), num2.fraction_.size()); ++i) {
+    if (num1.fraction_[i] < num2.fraction_[i]) return true;
+    if (num1.fraction_[i] > num2.fraction_[i]) return false;
+  }
+
+  return num1.fraction_.size() < num2.fraction_.size();
+}
+
+bool operator>(const Number &num1, const Number &num2) {
+  return !(num1 < num2) && num1 != num2;
+}
+
+Number operator+(const Number& num1, int num2) {
+  return num1 + Number(std::to_string(num2), 10);
+}
+
+Number operator--(Number& num) {
+  for (int i = 0; i < num.integer_.size(); ++i) {
+    if (num.integer_[i] != 0) {
+      num.integer_[i] -= 1;
+      break;
+    }
+    if (i == num.integer_.size() - 1) {
+      num.minus_ = true;
+      break;
+    }
+    num.integer_[i] = num.base_ - 1;
+  }
+
+  while (!num.integer_.empty() && num.integer_.back() == 0) {
+    num.integer_.pop_back();
+  }
+
+  if (num.integer_.empty()) {
+    num.integer_.push_back(0);
+  }
+
+  return num;
 }
