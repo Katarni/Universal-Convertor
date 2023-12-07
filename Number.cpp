@@ -4,6 +4,68 @@
 
 #include "Number.h"
 
+Number::Number(const std::string &num, int base) {
+  {
+    bool bracket = false, dot = false;
+    minus_ = false;
+    std::string let;
+    std::vector<unsigned char> str;
+    for (char c : num) {
+      if (c == '-') {
+        minus_ = true;
+        continue;
+      }
+
+      if (c == '.' || c == ',') {
+        std::reverse(str.begin(), str.end());
+        integer_ = str;
+        str.clear();
+        dot = true;
+        continue;
+      }
+
+      if (c == '(') {
+        fraction_ = str;
+        str.clear();
+        continue;
+      }
+
+      if (c == ')') {
+        period_ = str;
+        str.clear();
+        continue;
+      }
+
+      if (c == '[') {
+        bracket = true;
+        continue;
+      }
+
+      if (c == ']') {
+        bracket = false;
+        str.push_back(Number::toNum(let));
+        let.clear();
+        continue;
+      }
+
+      if (bracket) {
+        let.push_back(c);
+      } else {
+        str.push_back(Number::toNum(c));
+      }
+    }
+
+    if (!str.empty() && !dot) {
+      std::reverse(str.begin(), str.end());
+      integer_ = str;
+    } else if (!str.empty() && dot) {
+      fraction_ = str;
+    }
+
+    base_ = base;
+  }
+}
+
 Number operator+(Number num1, Number num2) {
   int carry = 0;
 
@@ -329,8 +391,12 @@ Number operator--(Number num, int x) {
     num.integer_[i] = num.base_ - 1;
   }
 
-  while (num.integer_.back() == 0) {
+  while (!num.integer_.empty() && num.integer_.back() == 0) {
     num.integer_.pop_back();
+  }
+
+  if (num.integer_.empty()) {
+    num.integer_.push_back(0);
   }
 
   return num;
@@ -479,4 +545,8 @@ Number operator--(Number& num) {
   }
 
   return num;
+}
+
+bool operator<=(const Number &num1, const Number &num2) {
+  return num1 < num2 || num1 == num2;
 }

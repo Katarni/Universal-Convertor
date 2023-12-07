@@ -13,76 +13,20 @@ class Number {
           fraction_(std::vector<unsigned char>(0)),
           period_(std::vector<unsigned char>(0)),
           minus_(false) {}
+
   Number(const std::vector<unsigned char>& num,
          const std::vector<unsigned char>& fraction,
          int base): integer_(num),
                     base_(base), fraction_(fraction),
                     period_(std::vector<unsigned char>(0)),
                     minus_(false) {}
+
   Number(const Number& other): integer_(other.integer_),
                               base_(other.base_),
                               fraction_(other.fraction_),
                               period_(other.period_),
                               minus_(other.minus_) {}
-  Number(const std::string& num, int base) {
-    bool bracket = false, dot = false;
-    minus_ = false;
-    std::string let;
-    std::vector<unsigned char> str;
-    for (char c : num) {
-      if (c == '-') {
-        minus_ = true;
-        continue;
-      }
-
-      if (c == '.' || c == ',') {
-        std::reverse(str.begin(), str.end());
-        integer_ = str;
-        str.clear();
-        dot = true;
-        continue;
-      }
-
-      if (c == '(') {
-        fraction_ = str;
-        str.clear();
-        continue;
-      }
-
-      if (c == ')') {
-        period_ = str;
-        str.clear();
-        continue;
-      }
-
-      if (c == '[') {
-        bracket = true;
-        continue;
-      }
-
-      if (c == ']') {
-        bracket = false;
-        str.push_back(Number::toNum(let));
-        let.clear();
-        continue;
-      }
-
-      if (bracket) {
-        let.push_back(c);
-      } else {
-        str.push_back(Number::toNum(c));
-      }
-    }
-
-    if (!str.empty() && !dot) {
-      std::reverse(str.begin(), str.end());
-      integer_ = str;
-    } else if (!str.empty() && dot) {
-      fraction_ = str;
-    }
-
-    base_ = base;
-  }
+  Number(const std::string& num, int base);
 
   Number (const std::vector<unsigned char>& num,
           const std::vector<unsigned char>& fraction,
@@ -149,6 +93,7 @@ class Number {
   friend Number operator--(Number& num);
 
   friend bool operator<(const Number& num1, const Number& num2);
+  friend bool operator<=(const Number& num1, const Number& num2);
   friend bool operator>(const Number& num1, const Number& num2);
 
   std::string toString();

@@ -158,14 +158,9 @@ Number Convertor::convertNumFromDecSystem(const Number &num, int target) {
 
   std::vector<unsigned char> converted_fract;
   Number fract(std::vector<unsigned char>(0), num.getFraction(), 10);
-  std::set<std::pair<std::string, int>> fract_find_period;
+  std::set<std::pair<Number, int>> fract_find_period;
 
-  std::string str;
-  for (unsigned char c : fract.getFraction()) {
-    str += Number::toLet(c);
-  }
-  fract_find_period.insert({str, 0});
-  str.clear();
+  fract_find_period.insert({fract, 0});
 
   int i = 1, period_start = -1;
   while (fract != Number(std::vector<unsigned char>(0), std::vector<unsigned char>(0), 10)) {
@@ -174,17 +169,13 @@ Number Convertor::convertNumFromDecSystem(const Number &num, int target) {
                                                              std::vector<unsigned char>(0), 10),
                                                       target).getInteger()[0]);
     fract.setInteger(std::vector<unsigned char>(0));
-    for (unsigned char c : fract.getFraction()) {
-      str += Number::toLet(c);
-    }
-    auto it = fract_find_period.lower_bound({str, 0});
-    if (it != fract_find_period.end() && it->first == str) {
+    auto it = fract_find_period.lower_bound({fract, 0});
+    if (it != fract_find_period.end() && it->first == fract) {
       period_start = it->second;
       break;
     }
-    fract_find_period.insert({str, i});
+    fract_find_period.insert({fract, i});
     ++i;
-    str.clear();
     if (i > 60) break;
   }
 
@@ -192,7 +183,7 @@ Number Convertor::convertNumFromDecSystem(const Number &num, int target) {
     converted.setFraction(std::vector<unsigned char>(converted_fract.begin(),
                                                      converted_fract.begin() + period_start));
     converted.setPeriod(std::vector<unsigned char>(converted_fract.begin() + period_start,
-                                                   converted_fract.end() - 1));
+                                                   converted_fract.end()));
   } else {
     converted.setFraction(converted_fract);
   }
@@ -210,10 +201,40 @@ Number Convertor::convertPeriodToDecSys(const Number& period_num,
 }
 
 Number Convertor::convertPeriodFromDecSys(Number period_num, int pre_period_size, int target) {
-  Number den_period_fract = Number::binaryPow(Number("10", 10), (int)period_num.getInteger().size() + pre_period_size)--;
-  den_period_fract *= Number::binaryPow(Number("10", 10), pre_period_size);
+  Number period_den = Number::binaryPow(Number("10", 10), (int)period_num.getInteger().size() + pre_period_size)--;
+  period_den *= Number::binaryPow(Number("10", 10), pre_period_size);
 
   Number::normalizePeriods(period_num, pre_period_size);
 
-  return Number();
+  Fraction fract(period_num, period_den);
+  std::vector<unsigned char> converted_fract;
+  std::set<std::pair<Number, int>> fract_find_period;
+
+  fract_find_period.insert({fract.num(), 0});
+  int i = 1, period_start = -1;
+  while (fract.num() != Number("0", 10)) {
+    fract *= target;
+    converted_fract.push_back(convertNumFromDecSystem(Fraction::normalizeFract(fract), target).getInteger()[0]);
+    auto it = fract_find_period.lower_bound({fract.num(), 0});
+    if (it != fract_find_period.end() && it->first == fract.num()) {
+      period_start = it->second;
+      break;
+    }
+    fract_find_period.insert({fract.num(), i});
+    ++i;
+    if (i > 60) break;
+  }
+
+  Number converted;
+
+  if (period_start != -1) {
+    converted.setFraction(std::vector<unsigned char>(converted_fract.begin(),
+                                                     converted_fract.begin() + period_start));
+    converted.setPeriod(std::vector<unsigned char>(converted_fract.begin() + period_start,
+                                                         converted_fract.end()));
+  } else {
+    converted.setFraction(converted_fract);
+  }
+
+  return converted;
 }

@@ -28,6 +28,10 @@ class Fraction {
                          const Fraction &fract_second);
 
   friend Fraction operator*(Fraction fract, const Number& num);
+  friend Fraction operator*(const Fraction& fract, int num);
+
+  Fraction operator*=(int other);
+  Fraction operator*=(const Number& other);
 
   static Number normalizeFract(Fraction& fract);
 

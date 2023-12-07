@@ -8,7 +8,5 @@ int main(int argc, char *argv[]) {
 //
 //  return QApplication::exec();
 
-  Fraction fract(Fraction(Number("55", 10), Number("2", 10)));
-  std::cout << Fraction::normalizeFract(fract) << '\n';
-  std::cout << fract.num();
+  std::cout << Convertor::convert("4891.5(3)", 10, 8);
 }
