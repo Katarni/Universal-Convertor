@@ -1,5 +1,5 @@
 //
-// Created by Тимур Ахметзянов on 28.11.2023.
+// Created by Timur Akhmetzianov on 28.11.2023.
 //
 
 #pragma once
@@ -23,7 +23,7 @@ class Number {
                               base_(other.base_),
                               fraction_(other.fraction_),
                               period_(other.period_),
-                              minus_(other.minus_){}
+                              minus_(other.minus_) {}
   Number(const std::string& num, int base) {
     bool bracket = false, dot = false;
     minus_ = false;
@@ -122,14 +122,9 @@ class Number {
     fraction_ = fraction;
   }
 
-  bool isMinus() const {
-    return minus_;
-  }
   void setMinus(bool minus) {
     minus_ = minus;
   }
-
-  const std::vector<unsigned char> &getPeriod() const;
 
   void setPeriod(const std::vector<unsigned char> &period);
 
@@ -163,7 +158,6 @@ class Number {
 
   static Number binaryPow(const Number& num, int pow);
 
-  uint64_t toInt64();
   uint64_t toInt64() const;
 
  private:

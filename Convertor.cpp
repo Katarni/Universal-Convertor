@@ -1,5 +1,5 @@
 //
-// Created by Тимур Ахметзянов on 28.11.2023.
+// Created by Timur Akhmetzianov on 28.11.2023.
 //
 
 #include "Convertor.h"
@@ -111,7 +111,7 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
   } else if (base == 10) {
     converted_integer = convertNumFromDecSystem(integer, target);
     if (!period.getInteger().empty()) {
-      converted_period = convertPeriodFromDecSys(period, period_den1, period_den2, target);
+      converted_period = convertPeriodFromDecSys(period, integer.getFraction().size(), target);
     }
   } else {
     Number dec_sys_integer = convertNumToDecSys(integer);
@@ -165,6 +165,7 @@ Number Convertor::convertNumFromDecSystem(const Number &num, int target) {
     str += Number::toLet(c);
   }
   fract_find_period.insert({str, 0});
+  str.clear();
 
   int i = 1, period_start = -1;
   while (fract != Number(std::vector<unsigned char>(0), std::vector<unsigned char>(0), 10)) {
@@ -182,14 +183,16 @@ Number Convertor::convertNumFromDecSystem(const Number &num, int target) {
       break;
     }
     fract_find_period.insert({str, i});
+    ++i;
     str.clear();
+    if (i > 35) break;
   }
 
   if (period_start != -1) {
     converted.setFraction(std::vector<unsigned char>(converted_fract.begin(),
                                                      converted_fract.begin() + period_start));
     converted.setPeriod(std::vector<unsigned char>(converted_fract.begin() + period_start,
-                                                   converted_fract.end()));
+                                                   converted_fract.end() - 1));
   } else {
     converted.setFraction(converted_fract);
   }
@@ -206,12 +209,6 @@ Number Convertor::convertPeriodToDecSys(const Number& period_num,
   return converted_period;
 }
 
-Number Convertor::convertPeriodFromDecSys(const Number& period_num,
-                                          const Number& period_den1,
-                                          const Number& period_den2,
-                                          int target) {
-  Number converted_period = convertNumFromDecSystem(period_num, target);
-  Number converted_den1 = convertNumFromDecSystem(period_den1, target);
-  Number converted_den2 = convertNumFromDecSystem(period_den2, target);
-  return converted_period;
+Number Convertor::convertPeriodFromDecSys(const Number &period_num, int pre_period_size, int target) {
+  return Number();
 }

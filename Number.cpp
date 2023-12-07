@@ -1,5 +1,5 @@
 //
-// Created by Тимур Ахметзянов on 28.11.2023.
+// Created by Timur Akhmetzianov on 28.11.2023.
 //
 
 #include "Number.h"
@@ -331,10 +331,6 @@ Number operator--(Number num, int x) {
   return num;
 }
 
-const std::vector<unsigned char> &Number::getPeriod() const {
-  return period_;
-}
-
 void Number::setPeriod(const std::vector<unsigned char> &period) {
   period_ = period;
 }
@@ -349,25 +345,16 @@ Number& Number::operator/=(uint64_t divider) {
   return *this;
 }
 
-
 std::string Number::toLet(unsigned char c) {
   std::string str;
   if (c < 10) {
     str += char(c + '0');
   } else if (c < 36) {
-    str += char(c - 10 + 'a');
+    str += char(c - 10 + 'A');
   } else {
     str += "[" + std::to_string(c) + "]";
   }
   return str;
-}
-
-uint64_t Number::toInt64() {
-  uint64_t sum = 0;
-  for (unsigned char c : integer_) {
-    sum = sum * 10 + c;
-  }
-  return sum;
 }
 
 uint64_t Number::toInt64() const {
