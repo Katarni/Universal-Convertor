@@ -185,7 +185,7 @@ Number Convertor::convertNumFromDecSystem(const Number &num, int target) {
     fract_find_period.insert({str, i});
     ++i;
     str.clear();
-    if (i > 35) break;
+    if (i > 60) break;
   }
 
   if (period_start != -1) {

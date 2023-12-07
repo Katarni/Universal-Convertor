@@ -21,6 +21,8 @@ add_executable(UniversalConvertor main.cpp
         Number.h
         App.cpp
         App.h
+        Fraction.cpp
+        Fraction.h
 )
 
 target_link_libraries(UniversalConvertor

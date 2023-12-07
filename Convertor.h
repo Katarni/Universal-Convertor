@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "Number.h"
+#include "Fraction.h"
 
 
 class Convertor {
