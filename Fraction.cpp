@@ -23,10 +23,7 @@ Number Fraction::normalizeFract(Fraction &fract) {
     ++ans;
   }
 
-  for (Number i("0", 10); i < fract.den_ * ans; ++i) {
-    --fract.num_;
-  }
-
+  fract.num_ -= fract.den_ * ans;
   return ans;
 }
 

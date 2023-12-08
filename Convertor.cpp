@@ -114,8 +114,18 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
       converted_period = convertPeriodFromDecSys(period, integer.getFraction().size(), target);
     }
   } else {
-    Number dec_sys_integer = convertNumToDecSys(integer);
-    converted_integer = convertNumFromDecSystem(dec_sys_integer, target);
+    Number dec_sys_num = convertNumToDecSys(integer);
+    if (!period.getInteger().empty()) {
+      dec_sys_num += convertPeriodToDecSys(period, period_den1, period_den2);
+    }
+
+    converted_integer = convertNumFromDecSystem(Number(dec_sys_num.getInteger(), dec_sys_num.getFraction(), 10), target);
+    dec_sys_num.reversePeriod();
+    converted_period = convertPeriodFromDecSys(Number(dec_sys_num.getPeriod(),
+                                                      std::vector<unsigned char>(0),
+                                                      10),
+                                               dec_sys_num.getFraction().size(),
+                                               target);
   }
 
   return (converted_integer + converted_period).toString();
@@ -201,6 +211,10 @@ Number Convertor::convertPeriodToDecSys(const Number& period_num,
 }
 
 Number Convertor::convertPeriodFromDecSys(Number period_num, int pre_period_size, int target) {
+  if (period_num.getInteger().empty()) {
+    period_num.setBase(target);
+    return period_num;
+  }
   Number period_den = Number::binaryPow(Number("10", 10), (int)period_num.getInteger().size() + pre_period_size)--;
   period_den *= Number::binaryPow(Number("10", 10), pre_period_size);
 

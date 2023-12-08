@@ -5,65 +5,63 @@
 #include "Number.h"
 
 Number::Number(const std::string &num, int base) {
-  {
-    bool bracket = false, dot = false;
-    minus_ = false;
-    std::string let;
-    std::vector<unsigned char> str;
-    for (char c : num) {
-      if (c == '-') {
-        minus_ = true;
-        continue;
-      }
-
-      if (c == '.' || c == ',') {
-        std::reverse(str.begin(), str.end());
-        integer_ = str;
-        str.clear();
-        dot = true;
-        continue;
-      }
-
-      if (c == '(') {
-        fraction_ = str;
-        str.clear();
-        continue;
-      }
-
-      if (c == ')') {
-        period_ = str;
-        str.clear();
-        continue;
-      }
-
-      if (c == '[') {
-        bracket = true;
-        continue;
-      }
-
-      if (c == ']') {
-        bracket = false;
-        str.push_back(Number::toNum(let));
-        let.clear();
-        continue;
-      }
-
-      if (bracket) {
-        let.push_back(c);
-      } else {
-        str.push_back(Number::toNum(c));
-      }
+  bool bracket = false, dot = false;
+  minus_ = false;
+  std::string let;
+  std::vector<unsigned char> str;
+  for (char c : num) {
+    if (c == '-') {
+      minus_ = true;
+      continue;
     }
 
-    if (!str.empty() && !dot) {
+    if (c == '.' || c == ',') {
       std::reverse(str.begin(), str.end());
       integer_ = str;
-    } else if (!str.empty() && dot) {
-      fraction_ = str;
+      str.clear();
+      dot = true;
+      continue;
     }
 
-    base_ = base;
+    if (c == '(') {
+      fraction_ = str;
+      str.clear();
+      continue;
+    }
+
+    if (c == ')') {
+      period_ = str;
+      str.clear();
+      continue;
+    }
+
+    if (c == '[') {
+      bracket = true;
+      continue;
+    }
+
+    if (c == ']') {
+      bracket = false;
+      str.push_back(Number::toNum(let));
+      let.clear();
+      continue;
+    }
+
+    if (bracket) {
+      let.push_back(c);
+    } else {
+      str.push_back(Number::toNum(c));
+    }
   }
+
+  if (!str.empty() && !dot) {
+    std::reverse(str.begin(), str.end());
+    integer_ = str;
+  } else if (!str.empty() && dot) {
+    fraction_ = str;
+  }
+
+  base_ = base;
 }
 
 Number operator+(Number num1, Number num2) {
@@ -127,6 +125,10 @@ Number operator+(Number num1, Number num2) {
     res_frac.pop_back();
   }
 
+  if (!res_period.empty() && res_frac.empty()) {
+    res_frac.push_back(0);
+  }
+
   if (carry) {
     res_int.push_back(carry);
   }
@@ -152,7 +154,7 @@ Number operator*(Number num1, Number num2) {
 
   for (int i = 0; i < num1.integer_.size(); ++i) {
     for (int j = 0; j < num2.integer_.size() || carry; ++j) {
-      int64_t cur = res_int[i + j] + (int64_t)num1.integer_[i] * (j < num2.integer_.size() ? num2.integer_[j] : 0) + carry;
+      uint64_t cur = res_int[i + j] + (uint64_t)num1.integer_[i] * (j < num2.integer_.size() ? num2.integer_[j] : 0) + carry;
       res_int[i + j] = int (cur % num1.base_);
       carry = int (cur / num1.base_);
     }
@@ -160,6 +162,10 @@ Number operator*(Number num1, Number num2) {
 
   while (res_int.size() > 1 && res_int.back() == 0) {
     res_int.pop_back();
+  }
+
+  if (res_int.empty()) {
+    res_int.push_back(0);
   }
 
   std::vector<unsigned char> res_frac;
@@ -178,19 +184,15 @@ Number operator*(Number num1, Number num2) {
     res_frac.pop_back();
   }
 
-  if (res_int.empty()) {
-    res_int.push_back(0);
-  }
-
   return Number(res_int, res_frac, num1.base_);
 }
 
-Number Number::operator+=(const Number &other) {
+Number& Number::operator+=(const Number &other) {
   *this = *this + other;
   return *this;
 }
 
-Number Number::operator*=(const Number &other) {
+Number& Number::operator*=(const Number &other) {
   *this = *this * other;
   return *this;
 }
@@ -259,41 +261,66 @@ Number operator/(Number num, int divider) {
     num.integer_.insert(num.integer_.begin(), 0);
   }
 
-  int carry = 0;
+  std::set<std::pair<uint64_t, int>> find_period;
 
+  int k = 0, period_start = -1, carry = 0;
   for (int i = (int)num.integer_.size() - 1; i >= 0; --i) {
-    int64_t cur = num.integer_[i] + (int64_t)carry * num.base_;
+    uint64_t cur = num.integer_[i] + (uint64_t)carry * num.base_;
+
+    auto it = find_period.lower_bound({cur, 0});
+    if (it != find_period.end() && it->first == cur) {
+      period_start = it->second;
+      break;
+    }
+    find_period.insert({cur, k});
     num.integer_[i] = static_cast<unsigned char>(cur / divider);
+    if (num.integer_[i] == 0) --k;
     carry = int(cur % divider);
+    ++k;
   }
 
-  while (num.integer_.size() > 1 && num.integer_.back() == 0) {
-    num.integer_.pop_back();
-  }
+//  bool plus = false;
 
   while (dot > 0 && (int)num.integer_.size() > 0) {
     num.fraction_.insert(num.fraction_.begin(), num.integer_.front());
     num.integer_.erase(num.integer_.begin());
     --dot;
+//    period_start = !plus ? period_start - 1 : period_start + 1;
+//    if (period_start <= 0) plus = true;
   }
 
   while (dot > 0) {
     num.fraction_.insert(num.fraction_.begin(), 0);
     --dot;
+//    period_start = !plus ? period_start - 1 : period_start + 1;
+//    if (period_start <= 0) plus = true;
   }
 
   while (!num.fraction_.empty() && num.fraction_.back() == 0) {
     num.fraction_.pop_back();
   }
 
+  while (num.integer_.size() > 1 && num.integer_.back() == 0) {
+    num.integer_.pop_back();
+  }
+
   if (num.integer_.empty()) {
     num.integer_.push_back(0);
+  }
+
+  if (period_start > -1) {
+    num.period_ = std::vector<unsigned char>(num.fraction_.begin() + period_start, num.fraction_.end());
+    num.fraction_.resize(period_start);
   }
 
   return num;
 }
 
 Number operator/(Number num, uint64_t divider) {
+  if (divider == 1) {
+    return num;
+  }
+
   int dot = 0;
   if (!num.fraction_.empty()) {
     std::reverse(num.fraction_.begin(), num.fraction_.end());
@@ -302,32 +329,49 @@ Number operator/(Number num, uint64_t divider) {
     num.fraction_.clear();
   }
 
-  for (int i = 0; i < 10; ++i) {
-    ++dot;
-    num.integer_.insert(num.integer_.begin(), 0);
+  if (num % divider != 0) {
+    for (int i = 0; i < 10; ++i) {
+      ++dot;
+      num.integer_.insert(num.integer_.begin(), 0);
+    }
   }
 
-  int carry = 0;
+  std::set<std::pair<uint64_t, int>> find_period;
 
+  int k = 0, period_start = -1, carry = 0;
   for (int i = (int)num.integer_.size() - 1; i >= 0; --i) {
-    int64_t cur = num.integer_[i] + (int64_t)carry * num.base_;
+    uint64_t cur = num.integer_[i] + (uint64_t)carry * num.base_;
+
+    auto it = find_period.lower_bound({cur, 0});
+    if (it != find_period.end() && it->first == cur) {
+      period_start = it->second;
+      break;
+    }
+    find_period.insert({cur, k});
     num.integer_[i] = static_cast<unsigned char>(cur / divider);
     carry = int(cur % divider);
+    ++k;
   }
 
   while (num.integer_.size() > 1 && num.integer_.back() == 0) {
     num.integer_.pop_back();
   }
 
+  bool plus = false;
+
   while (dot > 0 && (int)num.integer_.size() > 0) {
     num.fraction_.insert(num.fraction_.begin(), num.integer_.front());
     num.integer_.erase(num.integer_.begin());
     --dot;
+    period_start = !plus ? period_start - 1 : period_start + 1;
+    if (period_start <= 0) plus = true;
   }
 
   while (dot > 0) {
     num.fraction_.insert(num.fraction_.begin(), 0);
     --dot;
+    period_start = !plus ? period_start - 1 : period_start + 1;
+    if (period_start <= 0) plus = true;
   }
 
   while (!num.fraction_.empty() && num.fraction_.back() == 0) {
@@ -338,13 +382,18 @@ Number operator/(Number num, uint64_t divider) {
     num.integer_.push_back(0);
   }
 
+  if (period_start > -1) {
+    num.period_ = std::vector<unsigned char>(num.fraction_.begin() + period_start, num.fraction_.end());
+    num.fraction_.resize(period_start);
+  }
+
   return num;
 }
 
 int operator%(Number num1, int divider) {
   int carry = 0;
   for (int i=(int)num1.integer_.size()-1; i>=0; --i) {
-    long long cur = num1.integer_[i] + (int64_t)carry * num1.base_;
+    long long cur = num1.integer_[i] + (uint64_t)carry * num1.base_;
     num1.integer_[i] = int (cur / divider);
     carry = int (cur % divider);
   }
@@ -400,10 +449,6 @@ Number operator--(Number num, int x) {
   }
 
   return num;
-}
-
-void Number::setPeriod(const std::vector<unsigned char> &period) {
-  period_ = period;
 }
 
 Number& Number::operator/=(int divider) {
@@ -549,4 +594,33 @@ Number operator--(Number& num) {
 
 bool operator<=(const Number &num1, const Number &num2) {
   return num1 < num2 || num1 == num2;
+}
+
+void Number::reversePeriod() {
+  std::reverse(period_.begin(), period_.end());
+}
+
+Number operator-(Number num1, Number num2) {
+  if (num2 > num1) {
+    Number res = num2 - num1;
+    res.minus_ = true;
+    return res;
+  }
+
+  int carry = 0;
+  for (int i = 0; i < num2.integer_.size() || carry; ++i) {
+    int temp_carry = num1.integer_[i] < (carry + (i < num2.integer_.size() ? num2.integer_[i] : 0));
+    num1.integer_[i] -= carry + (i < num2.integer_.size() ? num2.integer_[i] : 0);
+    carry = temp_carry;
+    if (carry)  num1.integer_[i] += num1.base_;
+  }
+  while (num1.integer_.size() > 1 && num1.integer_.back() == 0) {
+    num1.integer_.pop_back();
+  }
+  return num1;
+}
+
+Number &Number::operator-=(const Number &other) {
+  *this = *this - other;
+  return *this;
 }
