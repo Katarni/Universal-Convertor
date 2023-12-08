@@ -13,16 +13,16 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(UniversalConvertor main.cpp
-        Convertor.cpp
-        Convertor.h
-        header.h
-        Number.cpp
-        Number.h
-        App.cpp
-        App.h
-        Fraction.cpp
-        Fraction.h
+add_executable(UniversalConvertor src/main.cpp
+        src/Convertor.cpp
+        src/Convertor.h
+        src/header.h
+        src/Number.cpp
+        src/Number.h
+        src/App.cpp
+        src/App.h
+        src/Fraction.cpp
+        src/Fraction.h
 )
 
 target_link_libraries(UniversalConvertor
