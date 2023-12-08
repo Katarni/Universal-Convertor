@@ -1,58 +1,35 @@
-# Universal Convertor
+## What it can do
 
-_the following is a technical task for this practical work_
-  
-Convert nums from one number system to another (from $p$ to $q$)  
-The interface should be **well designed**.
-
-## Additionally-mandatory part
-Class _big integer_ for numbers.  
-We need overload some operators for this class.
-## The problem is in the backend
-1) there are no limits for a numbers size
-2) we must work with float and periodic fractions
-3) digits
-	+ angel $p, q \leq 36$ 
-	+ devil $p, q - int$ (actually $p, q \leq 255$). When letters run out we will use number in square brackets.
-
-
-## Foolprof
-Actually it's not a problem.  
-We protect from letters only p and q.  
-For numbers we will check for the validity of the digets for our number system.  
-
-## Basics of arbitrary-precision arithmetic
-Every byte is a digit.  
-string or vector of unsigned char.  
-Digits will be stored in order from least to most significant.  
-The fractional part is stored separately, the period and the pre-period too.  
-  
-For fraction we can use class _fraction_.  
-#### How to use +
-a + b - long addition.
-carry - to transfer to the next digit.
-
-```cpp
-carry = 0
-s_i = (a_i + b_i + carry) % p
-carry = (a_i + b_i + carry) % p
+With this convertor you can convert numbers from any to any system.  
+You can convert integers, fractions or periodic fractions.  
+But remember:
++ There are only uppercase letters.
++ If you want to use letters more than 36 in decimal system, write it in square brackets.
++ You can use dot or comma, thats on you choice)
++ Actually system are do not exceed 255.
+## How to use
+To use my convertor you need to install QT.
+After installation just download package for your operation system and use it.
+##### How to install QT
+###### MacOS
+Install home brew in terminal
 ```
-  
-It can be in cycle. After that:
-
-```cpp
-if (carry > 0) {
-  s.push_back(smth);
-}
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
-
-#### Multiplication algorithms
-+ Supernative (addition)
-+ Native - in a column $O(n^2)$
-+ \*optional: Karatsuba algorithm
-
-#### Division
-Binary search on answer
-
-## Deadline
-Main deadline on 07.12.23
+Then activate it
+```
+export PATH="/opt/homebrew/bin:$PATH"
+echo $PATH
+```
+And after that
+```
+brew install qt6
+```
+###### Linux
+In terminal
+```
+sudo apt install qt6
+```
+Thats all
+###### Windows
+I really don't know)
