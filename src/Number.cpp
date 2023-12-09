@@ -279,21 +279,15 @@ Number operator/(Number num, int divider) {
     ++k;
   }
 
-//  bool plus = false;
-
   while (dot > 0 && (int)num.integer_.size() > 0) {
     num.fraction_.insert(num.fraction_.begin(), num.integer_.front());
     num.integer_.erase(num.integer_.begin());
     --dot;
-//    period_start = !plus ? period_start - 1 : period_start + 1;
-//    if (period_start <= 0) plus = true;
   }
 
   while (dot > 0) {
     num.fraction_.insert(num.fraction_.begin(), 0);
     --dot;
-//    period_start = !plus ? period_start - 1 : period_start + 1;
-//    if (period_start <= 0) plus = true;
   }
 
   while (!num.fraction_.empty() && num.fraction_.back() == 0) {
