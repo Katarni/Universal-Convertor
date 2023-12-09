@@ -2,7 +2,7 @@
 
 ## What it can do
 
-With this convertor you can convert numbers from any to any system.  
+With this convertor you can convert numbers from any to any number system.  
 You can convert integers, fractions or periodic fractions.  
 But remember:
 + There are only uppercase letters.
