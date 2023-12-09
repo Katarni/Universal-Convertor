@@ -27,6 +27,7 @@ And after that
 ```
 brew install qt6
 ```
+Hooray, qt have been installed.  
 ###### Linux
 In terminal
 ```
