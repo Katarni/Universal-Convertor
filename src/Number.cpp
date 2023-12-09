@@ -248,6 +248,10 @@ std::string Number::toString() {
 }
 
 Number operator/(Number num, int divider) {
+  if (divider == 1) {
+    return num;
+  }
+
   int dot = 0;
   if (!num.fraction_.empty()) {
     std::reverse(num.fraction_.begin(), num.fraction_.end());
@@ -256,9 +260,11 @@ Number operator/(Number num, int divider) {
     num.fraction_.clear();
   }
 
-  for (int i = 0; i < 10; ++i) {
-    ++dot;
-    num.integer_.insert(num.integer_.begin(), 0);
+  if (num % divider != 0) {
+    for (int i = 0; i < 10; ++i) {
+      ++dot;
+      num.integer_.insert(num.integer_.begin(), 0);
+    }
   }
 
   std::set<std::pair<uint64_t, int>> find_period;
@@ -274,35 +280,40 @@ Number operator/(Number num, int divider) {
     }
     find_period.insert({cur, k});
     num.integer_[i] = static_cast<unsigned char>(cur / divider);
-    if (num.integer_[i] == 0) --k;
     carry = int(cur % divider);
     ++k;
-  }
-
-  while (dot > 0 && (int)num.integer_.size() > 0) {
-    num.fraction_.insert(num.fraction_.begin(), num.integer_.front());
-    num.integer_.erase(num.integer_.begin());
-    --dot;
-  }
-
-  while (dot > 0) {
-    num.fraction_.insert(num.fraction_.begin(), 0);
-    --dot;
-  }
-
-  while (!num.fraction_.empty() && num.fraction_.back() == 0) {
-    num.fraction_.pop_back();
   }
 
   while (num.integer_.size() > 1 && num.integer_.back() == 0) {
     num.integer_.pop_back();
   }
 
+  bool plus = false;
+
+  while (dot > 0 && (int)num.integer_.size() > 0) {
+    num.fraction_.insert(num.fraction_.begin(), num.integer_.front());
+    num.integer_.erase(num.integer_.begin());
+    --dot;
+    period_start = !plus ? period_start - 1 : period_start + 1;
+    if (period_start <= 0) plus = true;
+  }
+
+  while (dot > 0) {
+    num.fraction_.insert(num.fraction_.begin(), 0);
+    --dot;
+    period_start = !plus ? period_start - 1 : period_start + 1;
+    if (period_start <= 0) plus = true;
+  }
+
+  while (!num.fraction_.empty() && num.fraction_.back() == 0) {
+    num.fraction_.pop_back();
+  }
+
   if (num.integer_.empty()) {
     num.integer_.push_back(0);
   }
 
-  if (period_start > -1) {
+  if (period_start > -1 && period_start < num.fraction_.size()) {
     num.period_ = std::vector<unsigned char>(num.fraction_.begin() + period_start, num.fraction_.end());
     num.fraction_.resize(period_start);
   }
@@ -376,7 +387,7 @@ Number operator/(Number num, uint64_t divider) {
     num.integer_.push_back(0);
   }
 
-  if (period_start > -1) {
+  if (period_start > -1 && !num.fraction_.empty()) {
     num.period_ = std::vector<unsigned char>(num.fraction_.begin() + period_start, num.fraction_.end());
     num.fraction_.resize(period_start);
   }
