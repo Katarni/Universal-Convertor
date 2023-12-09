@@ -7,11 +7,11 @@ You can convert integers, fractions or periodic fractions.
 But remember:
 + There are only uppercase letters.
 + If you want to use letters more than 36 in decimal system, write it in square brackets.
-+ You can use dot or comma, thats on you choice)
++ You can use dot or comma, that's on you choice)
 + Actually system are do not exceed 255.
 ## How to use
 To use my convertor you need to install QT.
-After installation just download package for your operation system and use it.
+After installation just download package for your OS and use it.
 ##### How to install QT
 ###### MacOS
 Install home brew in terminal
