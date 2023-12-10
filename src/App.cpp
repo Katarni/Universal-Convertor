@@ -78,3 +78,28 @@ void App::convertNumber() {
   number_ = Convertor::convert(number, base, target);
   converted_num_->setText(QString::fromStdString(number_));
 }
+
+void App::saveToFile() {
+  QString file = QFileDialog::getSaveFileName(nullptr, "Сохранить в файл", "", "*.txt");
+  QFile outFile(file);
+  if (!outFile.open(QIODevice::WriteOnly)) return;
+  QTextStream ostream(&outFile);
+
+  ostream << QString::fromStdString(number_);
+
+  outFile.close();
+}
+
+
+void App::loadFromFile() {
+  num_edit_->clear();
+
+  QString file = QFileDialog::getOpenFileName(nullptr, "Выбрать txt файл", "", "*.txt");
+  QFile in(file);
+  if (!in.open(QIODevice::ReadOnly)) return;
+  QString data = in.readLine();
+  in.close();
+
+  if (data.isEmpty()) return;
+  num_edit_->setText(data);
+}

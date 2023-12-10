@@ -18,6 +18,8 @@ class App : public QMainWindow {
 
  private slots:
   void convertNumber();
+  void saveToFile();
+  void loadFromFile();
 
  private:
   QWidget* window_;
@@ -27,4 +29,6 @@ class App : public QMainWindow {
   QPushButton* convert_;
   QLineEdit* converted_num_;
   std::string number_;
+  QPushButton* load_button_;
+  QPushButton* save_button_;
 };
