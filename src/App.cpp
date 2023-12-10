@@ -20,7 +20,7 @@ App::App(int width, int height) {
 
   num_edit_ = new QLineEdit(window_);
   num_edit_->resize(550, 30);
-  num_edit_->move(25, 130);
+  num_edit_->move(25, 120);
   num_edit_->setStyleSheet("QLineEdit { background: #dfd1e6;"
                           "color: #000;"
                           "padding-left: 5px;"
@@ -29,7 +29,7 @@ App::App(int width, int height) {
 
   base_edit_ = new QLineEdit(window_);
   base_edit_->resize(150, 30);
-  base_edit_->move(25, 180);
+  base_edit_->move(25, 170);
   base_edit_->setStyleSheet("QLineEdit { background: #dfd1e6;"
                           "color: #000;"
                           "padding-left: 5px;"
@@ -38,7 +38,7 @@ App::App(int width, int height) {
 
   target_base_edit_ = new QLineEdit(window_);
   target_base_edit_->resize(150, 30);
-  target_base_edit_->move(200, 180);
+  target_base_edit_->move(200, 170);
   target_base_edit_->setStyleSheet("QLineEdit { background: #dfd1e6;"
                                   "color: #000;"
                                   "padding-left: 5px;"
@@ -47,7 +47,7 @@ App::App(int width, int height) {
 
   converted_num_ = new QLineEdit(window_);
   converted_num_->resize(550, 30);
-  converted_num_->move(25, 230);
+  converted_num_->move(25, 220);
   converted_num_->setReadOnly(true);
   converted_num_->setStyleSheet("QLineEdit { background: #dfd1e6;"
                            "color: #000;"
@@ -57,7 +57,7 @@ App::App(int width, int height) {
 
   convert_ = new QPushButton(window_);
   convert_->resize(150, 40);
-  convert_->move(225, 280);
+  convert_->move(225, 270);
   convert_->setStyleSheet("QPushButton { background: #dfd1e6;"
                           "color: #000;"
                           "border-radius: 8px; }");
@@ -66,8 +66,23 @@ App::App(int width, int height) {
 
   number_ = "";
 
-//  load_button_ = new QPushButton(window_);
-//  save_button_ = new QPushButton(window_);
+  save_button_ = new QPushButton(window_);
+  save_button_->move(20, 330);
+  save_button_->resize(100, 40);
+  save_button_->setStyleSheet("QPushButton { background: #dfd1e6;"
+                              "color: #000;"
+                              "border-radius: 8px; }");
+  save_button_->setText("Сохранить\nв файл");
+  connect(save_button_, SIGNAL (released()), this, SLOT (saveToFile()));
+
+  load_button_ = new QPushButton(window_);
+  load_button_->move(150, 330);
+  load_button_->resize(100, 40);
+  load_button_->setStyleSheet("QPushButton { background: #dfd1e6;"
+                              "color: #000;"
+                              "border-radius: 8px; }");
+  load_button_->setText("Загрузить\nиз файла");
+  connect(load_button_, SIGNAL (released()), this, SLOT (loadFromFile()));
 }
 
 App::~App() {
@@ -104,7 +119,6 @@ void App::saveToFile() {
 
   outFile.close();
 }
-
 
 void App::loadFromFile() {
   num_edit_->clear();
