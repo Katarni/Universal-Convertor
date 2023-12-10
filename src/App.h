@@ -23,6 +23,7 @@ class App : public QMainWindow {
 
  private:
   QWidget* window_;
+  QLabel* header_container_;
   QLineEdit* num_edit_;
   QLineEdit* base_edit_;
   QLineEdit* target_base_edit_;

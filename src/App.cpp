@@ -9,6 +9,15 @@ App::App(int width, int height) {
   window_->setFixedSize(width, height);
   window_->setStyleSheet("QMainWindow { background: #fff; }");
 
+  header_container_ = new QLabel(window_);
+  header_container_->setFixedSize(305, 100);
+  header_container_->move(147, 0);
+  header_container_->setText("Universal Convertor");
+  QFont header_font = header_container_->font();
+  header_font.setPixelSize(32);
+  header_font.setBold(true);
+  header_container_->setFont(header_font);
+
   num_edit_ = new QLineEdit(window_);
   num_edit_->resize(550, 30);
   num_edit_->move(25, 130);
@@ -56,6 +65,9 @@ App::App(int width, int height) {
   connect(convert_, SIGNAL (released()), this, SLOT (convertNumber()));
 
   number_ = "";
+
+//  load_button_ = new QPushButton(window_);
+//  save_button_ = new QPushButton(window_);
 }
 
 App::~App() {
@@ -63,6 +75,9 @@ App::~App() {
   delete target_base_edit_;
   delete num_edit_;
   delete convert_;
+  delete header_container_;
+  delete load_button_;
+  delete save_button_;
   delete window_;
 }
 
