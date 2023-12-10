@@ -320,7 +320,7 @@ Number operator/(Number num, uint64_t divider) {
     num.integer_.push_back(0);
   }
 
-  if (period_start > -1 && !num.fraction_.empty()) {
+  if (period_start > -1 && period_start < num.fraction_.size()) {
     num.period_ = std::vector<unsigned char>(num.fraction_.begin() + period_start, num.fraction_.end());
     num.fraction_.resize(period_start);
   }
@@ -328,7 +328,7 @@ Number operator/(Number num, uint64_t divider) {
   return num;
 }
 
-int operator%(Number num1, int divider) {
+int operator%(Number num1, uint64_t divider) {
   int carry = 0;
   for (int i=(int)num1.integer_.size()-1; i>=0; --i) {
     long long cur = num1.integer_[i] + (uint64_t)carry * num1.base_;

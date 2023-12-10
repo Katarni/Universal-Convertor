@@ -76,7 +76,7 @@ App::App(int width, int height) {
   connect(save_button_, SIGNAL (released()), this, SLOT (saveToFile()));
 
   load_button_ = new QPushButton(window_);
-  load_button_->move(150, 330);
+  load_button_->move(140, 330);
   load_button_->resize(100, 40);
   load_button_->setStyleSheet("QPushButton { background: #dfd1e6;"
                               "color: #000;"
