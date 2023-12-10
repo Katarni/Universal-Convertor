@@ -26,4 +26,5 @@ class App : public QMainWindow {
   QLineEdit* target_base_edit_;
   QPushButton* convert_;
   QLineEdit* converted_num_;
+  std::string number_;
 };

@@ -7,12 +7,11 @@
 App::App(int width, int height) {
   window_ = new QMainWindow();
   window_->setFixedSize(width, height);
-  window_->setWindowTitle("Universal Convertor");
   window_->setStyleSheet("QMainWindow { background: #fff; }");
 
   num_edit_ = new QLineEdit(window_);
   num_edit_->resize(550, 30);
-  num_edit_->move(25, 70);
+  num_edit_->move(25, 130);
   num_edit_->setStyleSheet("QLineEdit { background: #dfd1e6;"
                           "color: #000;"
                           "padding-left: 5px;"
@@ -21,7 +20,7 @@ App::App(int width, int height) {
 
   base_edit_ = new QLineEdit(window_);
   base_edit_->resize(150, 30);
-  base_edit_->move(25, 120);
+  base_edit_->move(25, 180);
   base_edit_->setStyleSheet("QLineEdit { background: #dfd1e6;"
                           "color: #000;"
                           "padding-left: 5px;"
@@ -30,7 +29,7 @@ App::App(int width, int height) {
 
   target_base_edit_ = new QLineEdit(window_);
   target_base_edit_->resize(150, 30);
-  target_base_edit_->move(200, 120);
+  target_base_edit_->move(200, 180);
   target_base_edit_->setStyleSheet("QLineEdit { background: #dfd1e6;"
                                   "color: #000;"
                                   "padding-left: 5px;"
@@ -39,7 +38,7 @@ App::App(int width, int height) {
 
   converted_num_ = new QLineEdit(window_);
   converted_num_->resize(550, 30);
-  converted_num_->move(25, 170);
+  converted_num_->move(25, 230);
   converted_num_->setReadOnly(true);
   converted_num_->setStyleSheet("QLineEdit { background: #dfd1e6;"
                            "color: #000;"
@@ -49,12 +48,14 @@ App::App(int width, int height) {
 
   convert_ = new QPushButton(window_);
   convert_->resize(150, 40);
-  convert_->move(225, 220);
+  convert_->move(225, 280);
   convert_->setStyleSheet("QPushButton { background: #dfd1e6;"
                           "color: #000;"
                           "border-radius: 8px; }");
   convert_->setText("Конвертировать");
   connect(convert_, SIGNAL (released()), this, SLOT (convertNumber()));
+
+  number_ = "";
 }
 
 App::~App() {
@@ -74,6 +75,6 @@ void App::convertNumber() {
   base_edit_->clear();
   target_base_edit_->clear();
 
-  std::string converted = Convertor::convert(number, base, target);
-  converted_num_->setText(QString::fromStdString(converted));
+  number_ = Convertor::convert(number, base, target);
+  converted_num_->setText(QString::fromStdString(number_));
 }
