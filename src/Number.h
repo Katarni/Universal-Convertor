@@ -82,7 +82,7 @@ class Number {
   friend Number operator*(Number num1, Number num2);
   friend Number operator/(Number num1, int divider);
   friend Number operator/(Number num1, uint64_t divider);
-  friend int operator%(Number num1, int divider);
+  friend int operator%(Number num1, uint64_t divider);
 
   friend Number operator+(const Number& num1, int num2);
 

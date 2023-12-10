@@ -248,6 +248,13 @@ std::string Number::toString() {
 }
 
 Number operator/(Number num, int divider) {
+  bool minus = divider < 0;
+  num /= uint64_t(abs(divider));
+  num.setMinus(minus ^ num.minus_);
+  return num;
+}
+
+Number operator/(Number num, uint64_t divider) {
   if (divider == 1) {
     return num;
   }
@@ -321,81 +328,7 @@ Number operator/(Number num, int divider) {
   return num;
 }
 
-Number operator/(Number num, uint64_t divider) {
-  if (divider == 1) {
-    return num;
-  }
-
-  int dot = 0;
-  if (!num.fraction_.empty()) {
-    std::reverse(num.fraction_.begin(), num.fraction_.end());
-    num.integer_.insert(num.integer_.begin(), num.fraction_.begin(), num.fraction_.end());
-    dot += (int)num.fraction_.size();
-    num.fraction_.clear();
-  }
-
-  if (num % divider != 0) {
-    for (int i = 0; i < 10; ++i) {
-      ++dot;
-      num.integer_.insert(num.integer_.begin(), 0);
-    }
-  }
-
-  std::set<std::pair<uint64_t, int>> find_period;
-
-  int k = 0, period_start = -1, carry = 0;
-  for (int i = (int)num.integer_.size() - 1; i >= 0; --i) {
-    uint64_t cur = num.integer_[i] + (uint64_t)carry * num.base_;
-
-    auto it = find_period.lower_bound({cur, 0});
-    if (it != find_period.end() && it->first == cur) {
-      period_start = it->second;
-      break;
-    }
-    find_period.insert({cur, k});
-    num.integer_[i] = static_cast<unsigned char>(cur / divider);
-    carry = int(cur % divider);
-    ++k;
-  }
-
-  while (num.integer_.size() > 1 && num.integer_.back() == 0) {
-    num.integer_.pop_back();
-  }
-
-  bool plus = false;
-
-  while (dot > 0 && (int)num.integer_.size() > 0) {
-    num.fraction_.insert(num.fraction_.begin(), num.integer_.front());
-    num.integer_.erase(num.integer_.begin());
-    --dot;
-    period_start = !plus ? period_start - 1 : period_start + 1;
-    if (period_start <= 0) plus = true;
-  }
-
-  while (dot > 0) {
-    num.fraction_.insert(num.fraction_.begin(), 0);
-    --dot;
-    period_start = !plus ? period_start - 1 : period_start + 1;
-    if (period_start <= 0) plus = true;
-  }
-
-  while (!num.fraction_.empty() && num.fraction_.back() == 0) {
-    num.fraction_.pop_back();
-  }
-
-  if (num.integer_.empty()) {
-    num.integer_.push_back(0);
-  }
-
-  if (period_start > -1 && !num.fraction_.empty()) {
-    num.period_ = std::vector<unsigned char>(num.fraction_.begin() + period_start, num.fraction_.end());
-    num.fraction_.resize(period_start);
-  }
-
-  return num;
-}
-
-int operator%(Number num1, int divider) {
+int operator%(Number num1, uint64_t divider) {
   int carry = 0;
   for (int i=(int)num1.integer_.size()-1; i>=0; --i) {
     long long cur = num1.integer_[i] + (uint64_t)carry * num1.base_;

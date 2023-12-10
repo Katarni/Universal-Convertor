@@ -18,12 +18,18 @@ class App : public QMainWindow {
 
  private slots:
   void convertNumber();
+  void saveToFile();
+  void loadFromFile();
 
  private:
   QWidget* window_;
+  QLabel* header_container_;
   QLineEdit* num_edit_;
   QLineEdit* base_edit_;
   QLineEdit* target_base_edit_;
   QPushButton* convert_;
   QLineEdit* converted_num_;
+  std::string number_;
+  QPushButton* load_button_;
+  QPushButton* save_button_;
 };
