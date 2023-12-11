@@ -154,9 +154,9 @@ Number operator*(Number num1, Number num2) {
 
   for (int i = 0; i < num1.integer_.size(); ++i) {
     for (int j = 0; j < num2.integer_.size() || carry; ++j) {
-      uint64_t cur = res_int[i + j] + (uint64_t)num1.integer_[i] * (j < num2.integer_.size() ? num2.integer_[j] : 0) + carry;
-      res_int[i + j] = int (cur % num1.base_);
-      carry = int (cur / num1.base_);
+      uint64_t cur = res_int[i + j] + static_cast<uint64_t>(num1.integer_[i]) * (j < num2.integer_.size() ? num2.integer_[j] : 0) + carry;
+      res_int[i + j] = static_cast<unsigned char>(cur % num1.base_);
+      carry = int(cur / num1.base_);
     }
   }
 
@@ -278,7 +278,7 @@ Number operator/(Number num, uint64_t divider) {
 
   int k = 0, period_start = -1, carry = 0;
   for (int i = (int)num.integer_.size() - 1; i >= 0; --i) {
-    uint64_t cur = num.integer_[i] + (uint64_t)carry * num.base_;
+    uint64_t cur = num.integer_[i] + static_cast<uint64_t>(carry) * num.base_;
 
     auto it = find_period.lower_bound({cur, 0});
     if (it != find_period.end() && it->first == cur) {
@@ -331,7 +331,7 @@ Number operator/(Number num, uint64_t divider) {
 int operator%(Number num1, uint64_t divider) {
   int carry = 0;
   for (int i=(int)num1.integer_.size()-1; i>=0; --i) {
-    long long cur = num1.integer_[i] + (uint64_t)carry * num1.base_;
+    uint64_t cur = num1.integer_[i] + static_cast<uint64_t>(carry) * num1.base_;
     num1.integer_[i] = int (cur / divider);
     carry = int (cur % divider);
   }
