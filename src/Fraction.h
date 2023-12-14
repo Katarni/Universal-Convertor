@@ -30,12 +30,18 @@ class Fraction {
                          const Fraction &fract_second);
 
   friend Fraction operator*(Fraction fract, const Number& num);
+  friend Fraction operator/(const Fraction& fract, const Number& num);
+  friend Fraction operator+(const Fraction& fract1, const Fraction& fract2);
   friend Fraction operator*(const Fraction& fract, int num);
 
   Fraction operator*=(int other);
   Fraction operator*=(const Number& other);
+  Fraction operator/=(const Number& other);
+  Fraction operator+=(const Fraction& other);
 
   static Number normalizeFract(Fraction& fract);
+
+  Number toNum();
 
  private:
   Number num_, den_;

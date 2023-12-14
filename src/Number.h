@@ -87,7 +87,7 @@ class Number {
 
   friend Number operator+(const Number& num1, int num2);
 
-  Number& operator+=(const Number& other);
+  Number& operator+=(Number other);
   Number& operator*=(const Number& other);
   Number& operator-=(const Number& other);
   Number& operator/=(const Number& other);
@@ -124,6 +124,9 @@ class Number {
   static void normalizePeriods(Number& num, int pre_period_size);
 
   void reversePeriod();
+
+  static Number gcd(Number num1, Number num2);
+  static Number lcm(Number num1, Number num2);
 
  private:
   std::vector<unsigned char> integer_, fraction_, period_;

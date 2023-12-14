@@ -121,12 +121,8 @@ Number operator+(Number num1, Number num2) {
     carry = ((int)num1.integer_[i] + (int)num2.integer_[i] + carry) / num1.base_;
   }
 
-  while ((int)res_frac.size() > 0 && res_frac.back() == 0) {
+  while (res_period.empty() && (int)res_frac.size() > 0 && res_frac.back() == 0) {
     res_frac.pop_back();
-  }
-
-  if (!res_period.empty() && res_frac.empty()) {
-    res_frac.push_back(0);
   }
 
   if (carry) {
@@ -187,7 +183,7 @@ Number operator*(Number num1, Number num2) {
   return Number(res_int, res_frac, num1.base_);
 }
 
-Number& Number::operator+=(const Number &other) {
+Number& Number::operator+=(Number other) {
   *this = *this + other;
   return *this;
 }
@@ -252,6 +248,8 @@ Number operator/(Number num, Number divider) {
     return num;
   }
 
+  int period_starts_corrector = num.integer_.size();
+
   int dot = 0;
   if (!num.fraction_.empty()) {
     std::reverse(num.fraction_.begin(), num.fraction_.end());
@@ -261,7 +259,7 @@ Number operator/(Number num, Number divider) {
   }
 
   if (num % divider != Number("0", 10)) {
-    for (int i = 0; i < 100000; ++i) {
+    for (int64_t i = 0; i < 10000; ++i) {
       ++dot;
       num.integer_.insert(num.integer_.begin(), 0);
     }
@@ -308,7 +306,7 @@ Number operator/(Number num, Number divider) {
     num.integer_.push_back(0);
   }
 
-  period_start -= num.integer_.size();
+  period_start -= period_starts_corrector;
 
   if (period_start > -1 && period_start < num.fraction_.size()) {
     num.period_ = std::vector<unsigned char>(num.fraction_.begin() + period_start, num.fraction_.end());
@@ -567,4 +565,12 @@ Number operator%(const Number& num, const Number& divider) {
 Number& Number::operator/=(const Number &other) {
   *this = *this / other;
   return *this;
+}
+
+Number Number::gcd(Number num1, Number num2) {
+  return num2 == Number("0", 10) ? num1 : gcd(num2, num1 % num2);
+}
+
+Number Number::lcm(Number num1, Number num2) {
+  return num1 * num2 / gcd(num1, num2);
 }

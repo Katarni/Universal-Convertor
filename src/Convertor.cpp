@@ -133,19 +133,22 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
 
 Number Convertor::convertNumToDecSys(const Number &num) {
   Number converted;
-  Number power("1", 10);
+  Number power_int("1", 10);
 
   for (unsigned char c : num.getInteger()) {
-    converted += power * Number(std::to_string(c), 10);
-    power *= Number(std::to_string(num.getBase()), 10);
+    converted += power_int * Number(std::to_string(c), 10);
+    power_int *= Number(std::to_string(num.getBase()), 10);
   }
 
-  power = Number("1", 10) / Number(std::to_string(num.getBase()), 10);
+  Fraction power_fract(Number("1", 10), Number(std::to_string(num.getBase()), 10));
+  Fraction converted_fract;
 
   for (unsigned char c : num.getFraction()) {
-    converted += power * Number(std::to_string(c), 10);
-    power /= Number(std::to_string(num.getBase()), 10);
+    converted_fract += power_fract * Number(std::to_string(c), 10);
+    power_fract /= Number(std::to_string(num.getBase()), 10);
   }
+
+  converted += converted_fract.toNum();
 
   return converted;
 }
@@ -186,7 +189,7 @@ Number Convertor::convertNumFromDecSystem(const Number &num, int target) {
     }
     fract_find_period.insert({fract, i});
     ++i;
-    if (i > 60) break;
+//    if (i > 60) break;
   }
 
   if (period_start != -1) {
@@ -236,7 +239,7 @@ Number Convertor::convertPeriodFromDecSys(Number period_num, int pre_period_size
     }
     fract_find_period.insert({fract.num(), i});
     ++i;
-    if (i > 60) break;
+//    if (i > 60) break;
   }
 
   Number converted;
