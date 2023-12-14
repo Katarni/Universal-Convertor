@@ -17,6 +17,7 @@ App::App(int width, int height) {
   header_font.setPixelSize(32);
   header_font.setBold(true);
   header_container_->setFont(header_font);
+  header_container_->setStyleSheet("QLabel { color: #000; }");
 
   num_edit_ = new QLineEdit(window_);
   num_edit_->resize(550, 30);
@@ -45,15 +46,14 @@ App::App(int width, int height) {
                                   "border-radius: 8px; }");
   target_base_edit_->setPlaceholderText("Целевая система");
 
-  converted_num_ = new QLineEdit(window_);
+  converted_num_ = new QLabel(window_);
   converted_num_->resize(550, 30);
   converted_num_->move(25, 220);
-  converted_num_->setReadOnly(true);
-  converted_num_->setStyleSheet("QLineEdit { background: #dfd1e6;"
+  converted_num_->setStyleSheet("QLabel { background: #dfd1e6;"
                            "color: #000;"
                            "padding-left: 5px;"
                            "border-radius: 8px; }");
-  converted_num_->setPlaceholderText("Конвертированное число");
+  converted_num_->setText("Конвертированное число");
 
   convert_ = new QPushButton(window_);
   convert_->resize(150, 40);
