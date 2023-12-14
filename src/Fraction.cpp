@@ -40,3 +40,12 @@ Fraction Fraction::operator*=(const Number &other) {
   *this = *this * other;
   return *this;
 }
+
+Fraction::Fraction(const Number &number) {
+  Fraction pre_period_fract, period_fract;
+  pre_period_fract.num_ = Number(number.getPeriod(), std::vector<unsigned char>(0), 10);
+  pre_period_fract.den_ = Number::binaryPow(Number("10", 10), (int)number.getPeriod().size() + number.getFraction().size())--;
+  pre_period_fract.den_ *= Number::binaryPow(Number("10", 10), number.getFraction().size());
+
+
+}

@@ -101,10 +101,6 @@ void App::convertNumber() {
   int base = base_edit_->text().toInt();
   int target = target_base_edit_->text().toInt();
 
-  num_edit_->clear();
-  base_edit_->clear();
-  target_base_edit_->clear();
-
   number_ = Convertor::convert(number, base, target);
   converted_num_->setText(QString::fromStdString(number_));
 }

@@ -140,11 +140,11 @@ Number Convertor::convertNumToDecSys(const Number &num) {
     power *= Number(std::to_string(num.getBase()), 10);
   }
 
-  power = Number("1", 10) / num.getBase();
+  power = Number("1", 10) / Number(std::to_string(num.getBase()), 10);
 
   for (unsigned char c : num.getFraction()) {
     converted += power * Number(std::to_string(c), 10);
-    power /= num.getBase();
+    power /= Number(std::to_string(num.getBase()), 10);
   }
 
   return converted;
@@ -156,7 +156,7 @@ Number Convertor::convertNumFromDecSystem(const Number &num, int target) {
 
   while (integer != Number("0", 10)) {
     converted_int.push_back(integer % target);
-    integer /= target;
+    integer /= Number(std::to_string(target), 10);
     integer.setFraction(std::vector<unsigned char>(0));
   }
 
@@ -205,8 +205,8 @@ Number Convertor::convertPeriodToDecSys(const Number& period_num,
                                         const Number& period_den1,
                                         const Number& period_den2) {
   Number converted_period = convertNumToDecSys(period_num);
-  converted_period /= period_den1.toInt64();
-  converted_period /= period_den2.toInt64();
+  converted_period /= period_den1;
+  converted_period /= period_den2;
   return converted_period;
 }
 

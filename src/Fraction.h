@@ -19,6 +19,8 @@ class Fraction {
     den_ = other.den_;
   }
 
+  Fraction(const Number& number);
+
   Number num() const { return num_; }
   Number den() const { return den_; }
 

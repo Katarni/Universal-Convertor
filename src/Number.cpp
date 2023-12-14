@@ -247,15 +247,8 @@ std::string Number::toString() {
   return str;
 }
 
-Number operator/(Number num, int divider) {
-  bool minus = divider < 0;
-  num /= uint64_t(abs(divider));
-  num.setMinus(minus ^ num.minus_);
-  return num;
-}
-
-Number operator/(Number num, uint64_t divider) {
-  if (divider == 1) {
+Number operator/(Number num, Number divider) {
+  if (divider == Number("1", 10)) {
     return num;
   }
 
@@ -267,18 +260,19 @@ Number operator/(Number num, uint64_t divider) {
     num.fraction_.clear();
   }
 
-  if (num % divider != 0) {
-    for (int i = 0; i < 10; ++i) {
+  if (num % divider != Number("0", 10)) {
+    for (int i = 0; i < 100000; ++i) {
       ++dot;
       num.integer_.insert(num.integer_.begin(), 0);
     }
   }
 
-  std::set<std::pair<uint64_t, int>> find_period;
+  std::set<std::pair<Number, int>> find_period;
 
-  int k = 0, period_start = -1, carry = 0;
+  int k = 0, period_start = -1;
+  Number carry = Number("0", 10);
   for (int i = (int)num.integer_.size() - 1; i >= 0; --i) {
-    uint64_t cur = num.integer_[i] + static_cast<uint64_t>(carry) * num.base_;
+    Number cur = carry * num.base_ + int(num.integer_[i]);
 
     auto it = find_period.lower_bound({cur, 0});
     if (it != find_period.end() && it->first == cur) {
@@ -286,8 +280,8 @@ Number operator/(Number num, uint64_t divider) {
       break;
     }
     find_period.insert({cur, k});
-    num.integer_[i] = static_cast<unsigned char>(cur / divider);
-    carry = int(cur % divider);
+    num.integer_[i] = Number::integerDivision(cur, divider);
+    carry = cur % divider;
     ++k;
   }
 
@@ -295,21 +289,15 @@ Number operator/(Number num, uint64_t divider) {
     num.integer_.pop_back();
   }
 
-  bool plus = false;
-
   while (dot > 0 && (int)num.integer_.size() > 0) {
     num.fraction_.insert(num.fraction_.begin(), num.integer_.front());
     num.integer_.erase(num.integer_.begin());
     --dot;
-    period_start = !plus ? period_start - 1 : period_start + 1;
-    if (period_start <= 0) plus = true;
   }
 
   while (dot > 0) {
     num.fraction_.insert(num.fraction_.begin(), 0);
     --dot;
-    period_start = !plus ? period_start - 1 : period_start + 1;
-    if (period_start <= 0) plus = true;
   }
 
   while (!num.fraction_.empty() && num.fraction_.back() == 0) {
@@ -319,6 +307,8 @@ Number operator/(Number num, uint64_t divider) {
   if (num.integer_.empty()) {
     num.integer_.push_back(0);
   }
+
+  period_start -= num.integer_.size();
 
   if (period_start > -1 && period_start < num.fraction_.size()) {
     num.period_ = std::vector<unsigned char>(num.fraction_.begin() + period_start, num.fraction_.end());
@@ -387,16 +377,6 @@ Number operator--(Number num, int x) {
   }
 
   return num;
-}
-
-Number& Number::operator/=(int divider) {
-  *this = *this / divider;
-  return *this;
-}
-
-Number& Number::operator/=(uint64_t divider) {
-  *this = *this / divider;
-  return *this;
 }
 
 std::string Number::toLet(unsigned char c) {
@@ -560,5 +540,31 @@ Number operator-(Number num1, Number num2) {
 
 Number &Number::operator-=(const Number &other) {
   *this = *this - other;
+  return *this;
+}
+
+Number operator*(const Number &num1, int num2) {
+  return num1 * Number(std::to_string(num2), 10);
+}
+
+unsigned char Number::integerDivision(const Number &num, const Number &divider) {
+  unsigned char ans = 0;
+  while (divider * (ans + 1) <= num) {
+    ++ans;
+  }
+  return ans;
+}
+
+Number operator%(const Number& num, const Number& divider) {
+  Number ans("0", 10);
+  while (divider * (ans + 1) <= num) {
+    ++ans;
+  }
+
+  return num - divider*ans;
+}
+
+Number& Number::operator/=(const Number &other) {
+  *this = *this / other;
   return *this;
 }
