@@ -10,7 +10,7 @@ class App : public QMainWindow {
 
  public:
   App(int width, int height);
-  ~App() override;
+  ~App();
 
   void render() {
     window_->show();
