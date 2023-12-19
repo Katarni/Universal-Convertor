@@ -390,14 +390,6 @@ std::string Number::toLet(unsigned char c) {
   return str;
 }
 
-uint64_t Number::toInt64() const {
-  uint64_t sum = 0;
-  for (int i = (int)integer_.size(); i >= 0; --i) {
-    sum = sum * 10 + integer_[i];
-  }
-  return sum;
-}
-
 void Number::normalizePeriods(Number &num1, Number &num2) {
   if (num1.fraction_.size() > num2.fraction_.size()) {
     if (num2.period_.empty()) {

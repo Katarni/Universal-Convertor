@@ -119,8 +119,6 @@ class Number {
 
   static Number binaryPow(const Number& num, int pow);
 
-  uint64_t toInt64() const;
-
   static void normalizePeriods(Number& num, int pre_period_size);
 
   void reversePeriod();

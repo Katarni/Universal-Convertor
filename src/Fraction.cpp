@@ -1,5 +1,5 @@
 //
-// Created by Тимур Ахметзянов on 07.12.2023.
+// Created by Timur Akhmetzianov on 07.12.2023.
 //
 
 #include "Fraction.h"
@@ -39,25 +39,6 @@ Fraction Fraction::operator*=(int other) {
 Fraction Fraction::operator*=(const Number &other) {
   *this = *this * other;
   return *this;
-}
-
-Fraction::Fraction(const Number &number) {
-  Fraction pre_period_fract, period_fract;
-  std::vector<unsigned char> period_fract_num = number.getPeriod();
-  std::reverse(period_fract_num.begin(), period_fract_num.end());
-  period_fract.num_ = Number(period_fract_num, std::vector<unsigned char>(0), 10);
-  period_fract.den_ = Number::binaryPow(Number("10", 10), (int)number.getPeriod().size() + number.getFraction().size())--;
-  period_fract.den_ *= Number::binaryPow(Number("10", 10), number.getFraction().size());
-
-  std::vector<unsigned char> pre_period_num = number.getInteger();
-  pre_period_num.insert(pre_period_num.end(), number.getFraction().begin(), number.getFraction().end());
-  pre_period_fract.num_ = Number(pre_period_num, std::vector<unsigned char>(0), 10);
-  pre_period_fract.den_ = Number::binaryPow(Number("10", 10), (int)number.getFraction().size());
-
-  *this = pre_period_fract + period_fract;
-  if (this->den_ == Number("0", 10) || this->den_.getInteger().empty()) {
-    this->den_ = Number("1", 10);
-  }
 }
 
 Fraction operator+(const Fraction& fract1, const Fraction& fract2) {

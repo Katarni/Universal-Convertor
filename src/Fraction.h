@@ -1,5 +1,5 @@
 //
-// Created by Тимур Ахметзянов on 07.12.2023.
+// Created by Timur Akhmetzianov on 07.12.2023.
 //
 
 #pragma once
@@ -19,10 +19,7 @@ class Fraction {
     den_ = other.den_;
   }
 
-  Fraction(const Number& number);
-
   Number num() const { return num_; }
-  Number den() const { return den_; }
 
   friend bool operator==(const Fraction &fract_first,
                          const Fraction &fract_second);
