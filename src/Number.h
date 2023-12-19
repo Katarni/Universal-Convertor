@@ -128,6 +128,8 @@ class Number {
   static Number gcd(Number num1, Number num2);
   static Number lcm(Number num1, Number num2);
 
+  Number& normalizePeriods();
+
  private:
   std::vector<unsigned char> integer_, fraction_, period_;
   int base_;

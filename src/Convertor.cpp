@@ -132,7 +132,7 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
                                                target);
   }
 
-  return (converted_integer + converted_period).toString();
+  return (converted_integer + converted_period).normalizePeriods().toString();
 }
 
 Number Convertor::convertNumToDecSys(const Number &num) {
@@ -193,7 +193,6 @@ Number Convertor::convertNumFromDecSystem(const Number &num, int target) {
     }
     fract_find_period.insert({fract, i});
     ++i;
-//    if (i > 60) break;
   }
 
   if (period_start != -1) {
@@ -243,7 +242,6 @@ Number Convertor::convertPeriodFromDecSys(Number period_num, int pre_period_size
     }
     fract_find_period.insert({fract.num(), i});
     ++i;
-//    if (i > 60) break;
   }
 
   Number converted;

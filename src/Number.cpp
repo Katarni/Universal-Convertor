@@ -574,3 +574,14 @@ Number Number::gcd(Number num1, Number num2) {
 Number Number::lcm(Number num1, Number num2) {
   return num1 * num2 / gcd(num1, num2);
 }
+
+Number& Number::normalizePeriods() {
+  if (period_.empty()) return *this;
+
+  while(!fraction_.empty() && fraction_.back() == period_.back()) {
+    period_.pop_back();
+    period_.insert(period_.begin(), fraction_.back());
+    fraction_.pop_back();
+  }
+  return *this;
+}
