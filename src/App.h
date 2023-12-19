@@ -5,6 +5,7 @@
 #pragma once
 #include "Convertor.h"
 
+
 class App : public QMainWindow {
  Q_OBJECT
 
