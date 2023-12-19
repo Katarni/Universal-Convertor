@@ -103,6 +103,10 @@ std::string Convertor::convert(const std::string& num, int base, int target) {
 
   Number converted_integer("", target), converted_period("", target);
 
+  if (target == base) {
+    return num;
+  }
+
   if (target == 10) {
     converted_integer = convertNumToDecSys(integer);
     if (!period.getInteger().empty()) {
