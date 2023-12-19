@@ -150,7 +150,8 @@ Number operator*(Number num1, Number num2) {
 
   for (int i = 0; i < num1.integer_.size(); ++i) {
     for (int j = 0; j < num2.integer_.size() || carry; ++j) {
-      uint64_t cur = res_int[i + j] + static_cast<uint64_t>(num1.integer_[i]) * (j < num2.integer_.size() ? num2.integer_[j] : 0) + carry;
+      uint64_t cur = res_int[i + j] + static_cast<uint64_t>(num1.integer_[i]) *
+                                                            (j < num2.integer_.size() ? num2.integer_[j] : 0) + carry;
       res_int[i + j] = static_cast<unsigned char>(cur % num1.base_);
       carry = int(cur / num1.base_);
     }
