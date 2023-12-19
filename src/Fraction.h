@@ -1,5 +1,5 @@
 //
-// Created by Тимур Ахметзянов on 07.12.2023.
+// Created by Timur Akhmetzianov on 07.12.2023.
 //
 
 #pragma once
@@ -20,7 +20,6 @@ class Fraction {
   }
 
   Number num() const { return num_; }
-  Number den() const { return den_; }
 
   friend bool operator==(const Fraction &fract_first,
                          const Fraction &fract_second);
@@ -28,12 +27,18 @@ class Fraction {
                          const Fraction &fract_second);
 
   friend Fraction operator*(Fraction fract, const Number& num);
+  friend Fraction operator/(const Fraction& fract, const Number& num);
+  friend Fraction operator+(const Fraction& fract1, const Fraction& fract2);
   friend Fraction operator*(const Fraction& fract, int num);
 
   Fraction operator*=(int other);
   Fraction operator*=(const Number& other);
+  Fraction operator/=(const Number& other);
+  Fraction operator+=(const Fraction& other);
 
   static Number normalizeFract(Fraction& fract);
+
+  Number toNum();
 
  private:
   Number num_, den_;

@@ -1,5 +1,5 @@
 //
-// Created by Тимур Ахметзянов on 07.12.2023.
+// Created by Timur Akhmetzianov on 07.12.2023.
 //
 
 #include "Fraction.h"
@@ -39,4 +39,31 @@ Fraction Fraction::operator*=(int other) {
 Fraction Fraction::operator*=(const Number &other) {
   *this = *this * other;
   return *this;
+}
+
+Fraction operator+(const Fraction& fract1, const Fraction& fract2) {
+  Fraction res;
+  Number dens_lcm = Number::lcm(fract1.den_, fract2.den_);
+  res.num_ = fract1.num_ * Number::integerDivision(dens_lcm, fract1.den_) +
+              fract2.num_ * Number::integerDivision(dens_lcm, fract2.den_);
+  res.den_ = dens_lcm;
+  return res;
+}
+
+Fraction Fraction::operator+=(const Fraction &other) {
+  *this = *this + other;
+  return *this;
+}
+
+Fraction operator/(const Fraction& fract, const Number& num) {
+  return Fraction(fract.num_, fract.den_ * num);
+}
+
+Fraction Fraction::operator/=(const Number &other) {
+  *this = *this / other;
+  return *this;
+}
+
+Number Fraction::toNum() {
+  return num_ / den_;
 }

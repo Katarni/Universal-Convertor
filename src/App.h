@@ -5,6 +5,7 @@
 #pragma once
 #include "Convertor.h"
 
+
 class App : public QMainWindow {
  Q_OBJECT
 
@@ -28,7 +29,7 @@ class App : public QMainWindow {
   QLineEdit* base_edit_;
   QLineEdit* target_base_edit_;
   QPushButton* convert_;
-  QLineEdit* converted_num_;
+  QTextBrowser* converted_num_;
   std::string number_;
   QPushButton* load_button_;
   QPushButton* save_button_;

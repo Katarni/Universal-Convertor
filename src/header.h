@@ -22,3 +22,4 @@
 #include <QFileDialog>
 #include <QFont>
 #include <QFontDatabase>
+#include <QTextBrowser>

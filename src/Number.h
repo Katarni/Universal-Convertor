@@ -80,17 +80,17 @@ class Number {
   friend Number operator+(Number num1, Number num2);
   friend Number operator-(Number num1, Number num2);
   friend Number operator*(Number num1, Number num2);
-  friend Number operator/(Number num1, int divider);
-  friend Number operator/(Number num1, uint64_t divider);
+  friend Number operator*(const Number &num1, int num2);
+  friend Number operator/(Number num1, Number divider);
   friend int operator%(Number num1, uint64_t divider);
+  friend Number operator%(const Number& num, const Number& divider);
 
   friend Number operator+(const Number& num1, int num2);
 
-  Number& operator+=(const Number& other);
+  Number& operator+=(Number other);
   Number& operator*=(const Number& other);
   Number& operator-=(const Number& other);
-  Number& operator/=(int divider);
-  Number& operator/=(uint64_t divider);
+  Number& operator/=(const Number& other);
 
   friend bool operator==(const Number& num1, const Number& num2);
   friend bool operator!=(const Number& num1, const Number& num2);
@@ -102,6 +102,8 @@ class Number {
   friend bool operator<(const Number& num1, const Number& num2);
   friend bool operator<=(const Number& num1, const Number& num2);
   friend bool operator>(const Number& num1, const Number& num2);
+
+  static unsigned char integerDivision(const Number& num, const Number& divider);
 
   std::string toString();
 
@@ -117,11 +119,14 @@ class Number {
 
   static Number binaryPow(const Number& num, int pow);
 
-  uint64_t toInt64() const;
-
   static void normalizePeriods(Number& num, int pre_period_size);
 
   void reversePeriod();
+
+  static Number gcd(Number num1, Number num2);
+  static Number lcm(Number num1, Number num2);
+
+  Number& normalizePeriods();
 
  private:
   std::vector<unsigned char> integer_, fraction_, period_;
