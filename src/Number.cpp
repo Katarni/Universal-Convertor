@@ -207,7 +207,7 @@ int Number::toNum(char c) {
     return c - '0';
   }
 
-  return c - 'a' + 10;
+  return c - 'A' + 10;
 }
 
 std::string Number::toString() {
