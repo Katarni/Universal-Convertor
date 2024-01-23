@@ -33,7 +33,7 @@ carry - to transfer to the next digit.
 ```cpp
 carry = 0
 s_i = (a_i + b_i + carry) % p
-carry = (a_i + b_i + carry) % p
+carry = (a_i + b_i + carry) / p
 ```
 
 It can be in cycle. After that:
